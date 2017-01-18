@@ -43,7 +43,24 @@ typedef int BOOL;
 
 	=-=-=-To Test =-=-=-
 
+		get_area_start
+
 		is_full
+
+	=-=-=- Can Improve =-=-=-
+
+		is_present
+
+
+	To do:
+		Add file I/O
+
+		Optimise functions
+		
+
+	Done:
+		Go over and find all calls to get_area and make sure they have accompanying free();
+		Only 2 calls, with 2 frees.
 
 
 */
@@ -79,8 +96,8 @@ int* grid_traverse(int choice, int index, int* grid_start){
 }
 
 /*Is called inside of get_area*/
+/*
 int* get_area_start(int* current_cell, int choice, int* grid_start){
-
 	int cell_index = current_cell - grid_start;
 
 	int column_index = cell_index % 9;
@@ -102,48 +119,52 @@ int* get_area_start(int* current_cell, int choice, int* grid_start){
 			area_start = grid_traverse(choice, chamber_index, grid_start);
 			break;
 	}
-
 	return area_start;
 }
+*/
+
+int* get_area_start(int* current_cell, int choice, int* grid_start){
+	int cell_index = current_cell - grid_start;
+	
+	int choice_index = 0;
+
+	switch(choice){
+		case COLUMN:
+			choice_index = cell_index % 9;
+			break;
+
+		case ROW:
+			choice_index = cell_index / 9;
+			break;
+
+		case CHAMBER:
+			/*
+				choice_index = (( (cell_index / 9) / 3) * 3) + ((cell_index % 9) / 3);
+				Although it's integer division, these 2 are the same.
+				These may be able to be further optimised.
+			*/
+			choice_index = (((cell_index / 27) * 3)) + ((cell_index % 9) / 3);
+			break;
+	}
+
+	return grid_traverse(choice, choice_index, grid_start);
+}
+
 
 
 /*All calls of get_area use calloc, therefore a partnering free must be called.*/
 int** get_area(int *cell, int choice, int *grid_start){
 	int **container_area = (int**)calloc(9, sizeof(int*));
 	int **container_pointer = container_area;
-	/*
-	*	We have to get the start of the area.
-	*	Then, we have to increment over that area, copying each cell into the container_area.
-			use the double forloop system that we developed for the previous project.
-	*		
-	*	
-
-		here's what the notes say:
-											-
-			-				-				|
-			|get pa value 	| -> do 3 times	|
-			|pa += main  	|				|
-			-				-				| -> do 3 times.	
-											|
-			pa += secondary value			|
-											-
-
-		Have pA = start of area.
-		return_area[0] = pA, where return_area is an array of pointers.
-
-		increment pA by the main value (which will be 1 or 9);
-
-		Do this 3 times.
-
-		increment pA by the secondary value (which can be 1, 9, or 6);
-
-	Do this entire thing, 3 times, retruning 9 entries.
-	*/
 
 	int *cell_pointer = get_area_start(cell, choice, grid_start);
 
 	int main_increment = 0, secondary_increment = 0;
 
+	/*
+		Incrementing over a row or a column is 8 same equal steps.
+		Incrementing over a chamber is 3 small steps, then a jump to the next row (6 cells).
+	*/
 	switch(choice){
 		case COLUMN:
 			main_increment = 9;
@@ -188,6 +209,7 @@ BOOL is_present(int value, int **area){
 	return FALSE;
 }
 
+
 /*Function does not take into account if a cell is already a non zero value.*/
 BOOL is_appropriate(int *cell, int value, int* grid_start){
 	BOOL is_cell_appropriate = TRUE;
@@ -213,14 +235,6 @@ BOOL solve_area(int *cell, int choice, int* grid_start){
 	BOOL is_changed = FALSE;
 
 	for(int value = 1; value <= 9; ++value){
-		/*
-			For each value, from 1 to 9
-			Go over the area and find how many appropriate spots there are for the value.
-			If there is only a single spot, that spot is to be equal to that value.
-
-			Reset the value of value to 1, each time a spot is filled, as the newly filled spot
-			may effect if a new spot is able to be calculated.
-		*/
 		if(is_present(value, area)){
 			continue;
 		}
@@ -317,6 +331,8 @@ int main(){
 	compute_board(&grid[0][0]);
 	
 	printf("Solve_area has completed\n");
+
+	int *start = get_area_start(&grid[0][0], CHAMBER, &grid[0][0]);
 
 	return 0;
 }
