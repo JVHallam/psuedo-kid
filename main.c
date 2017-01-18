@@ -43,8 +43,6 @@ typedef int BOOL;
 
 	=-=-=-To Test =-=-=-
 
-		get_area_start
-
 		is_full
 
 	=-=-=- Can Improve =-=-=-
@@ -96,33 +94,6 @@ int* grid_traverse(int choice, int index, int* grid_start){
 }
 
 /*Is called inside of get_area*/
-/*
-int* get_area_start(int* current_cell, int choice, int* grid_start){
-	int cell_index = current_cell - grid_start;
-
-	int column_index = cell_index % 9;
-	int row_index = cell_index / 9;
-	int chamber_index = ((row_index / 3) * 3) + (column_index / 3);
-
-	int *area_start = 0;
-
-	switch(choice){
-		case COLUMN:
-			area_start = grid_traverse(choice, column_index, grid_start);
-			break;
-
-		case ROW:
-			area_start = grid_traverse(choice, row_index, grid_start);
-			break;
-
-		case CHAMBER:
-			area_start = grid_traverse(choice, chamber_index, grid_start);
-			break;
-	}
-	return area_start;
-}
-*/
-
 int* get_area_start(int* current_cell, int choice, int* grid_start){
 	int cell_index = current_cell - grid_start;
 	
@@ -200,14 +171,14 @@ int** get_area(int *cell, int choice, int *grid_start){
 
 /*Return true if a value is present in an area*/
 BOOL is_present(int value, int **area){
-	for(int area_index = 0; area_index < 9; ++area_index){
-		if(**area == value){
+	for(int **area_ptr = area; area_ptr < (area + 9); ++area_ptr){
+		if(**area_ptr == value){
 			return TRUE;
 		}
-		++area;
 	}
 	return FALSE;
 }
+
 
 
 /*Function does not take into account if a cell is already a non zero value.*/
@@ -331,8 +302,6 @@ int main(){
 	compute_board(&grid[0][0]);
 	
 	printf("Solve_area has completed\n");
-
-	int *start = get_area_start(&grid[0][0], CHAMBER, &grid[0][0]);
 
 	return 0;
 }
