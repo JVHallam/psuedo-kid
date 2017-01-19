@@ -191,6 +191,7 @@ BOOL is_appropriate(int *cell, int value, int* grid_start){
 		BOOL is_value_present = is_present(value, area);
 
 		free(area);
+		area = 0;
 
 		if(is_value_present){
 			is_cell_appropriate = FALSE;
@@ -220,7 +221,6 @@ BOOL solve_area(int *cell, int choice, int* grid_start){
 					if(appropriate_cell == 0){
 						appropriate_cell = *cell_ptr;
 					}
-				
 					else{
 						appropriate_cell = 0;
 						break;
