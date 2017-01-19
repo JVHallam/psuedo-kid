@@ -68,22 +68,18 @@ typedef int BOOL;
 /*Choice being column, row, chamber, cell*/
 int* grid_traverse(int choice, int index, int* grid_start){
 	/*int* destination = grid_start;*/
-	int row_start, column_start, *destination = grid_start;
+	int *destination = grid_start;
 
 	switch(choice){
 		case COLUMN:
 			destination += index;
 			break;
-
 		case ROW:
 			destination += (index * 9);
 			break;
-
 		case CHAMBER:
-			row_start = (index / 3) * 27;
-			column_start = (index % 3) * 3;
-			destination += row_start;
-			destination += column_start;
+			/*desination += (row chamber starts on ) + (column chamber starts on)*/
+			destination += ((index / 3) * 27) + ((index % 3) * 3);
 			break;
 
 		case CELL:
