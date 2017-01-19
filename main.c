@@ -173,7 +173,7 @@ BOOL is_full(int **area){
 	return is_present(0, area);
 }
 
-/*Function does not take into account if a cell is already a non zero value.*/
+/*Function Doesn't take into account if the cell has a non-zero value*/
 BOOL is_appropriate(int *cell, int value, int* grid_start){
 	/*
 		Don't try to optimise this function. It's written so that free can be called in an
@@ -210,12 +210,13 @@ BOOL solve_area(int *cell, int choice, int* grid_start){
 			int *appropriate_cell = 0;
 			
 			for(int **cell_ptr = area; cell_ptr < (area + 9); ++cell_ptr){
-				
+
 				if(**cell_ptr == 0 && is_appropriate(*cell_ptr, value, grid_start)){
-				
-					if(appropriate_cell == 0){
+
+					if(!appropriate_cell){
 						appropriate_cell = *cell_ptr;
 					}
+
 					else{
 						appropriate_cell = 0;
 						break;
@@ -224,7 +225,7 @@ BOOL solve_area(int *cell, int choice, int* grid_start){
 				}
 			}
 
-			if(appropriate_cell != NULL){
+			if(appropriate_cell){
 				*appropriate_cell = value;
 				is_changed = TRUE;
 			}
@@ -236,11 +237,8 @@ BOOL solve_area(int *cell, int choice, int* grid_start){
 	return is_changed;
 }
 
-
-
 void compute_board(int *grid_start){
 	/*Until a loop over has made no changes, continue to call solve_area*/
-
 	BOOL is_changed = TRUE;
 
 	while(is_changed){
@@ -277,6 +275,8 @@ int main(){
 	};
 
 	compute_board(&grid[0][0]);
+
+	int holder = 0;
 	
 	printf("Solve_area has completed\n");
 
