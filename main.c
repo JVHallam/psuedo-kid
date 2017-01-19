@@ -67,7 +67,6 @@ typedef int BOOL;
 
 /*Choice being column, row, chamber, cell*/
 int* grid_traverse(int choice, int index, int* grid_start){
-	/*int* destination = grid_start;*/
 	int *destination = grid_start;
 
 	switch(choice){
@@ -106,9 +105,7 @@ int* get_area_start(int* current_cell, int choice, int* grid_start){
 
 		case CHAMBER:
 			/*
-				choice_index = (( (cell_index / 9) / 3) * 3) + ((cell_index % 9) / 3);
-				Although it's integer division, these 2 are the same.
-				These may be able to be further optimised.
+				Remember, this is integer division. These can't be cancelled out.
 			*/
 			choice_index = (((cell_index / 27) * 3)) + ((cell_index % 9) / 3);
 			break;
@@ -117,9 +114,7 @@ int* get_area_start(int* current_cell, int choice, int* grid_start){
 	return grid_traverse(choice, choice_index, grid_start);
 }
 
-
-
-/*All calls of get_area use calloc, therefore a partnering free must be called.*/
+/*get_area has calls to Calloc, must always be paired with free.*/
 int** get_area(int *cell, int choice, int *grid_start){
 	int **container_area = (int**)calloc(9, sizeof(int*));
 	int **container_pointer = container_area;
@@ -127,7 +122,6 @@ int** get_area(int *cell, int choice, int *grid_start){
 	int *cell_pointer = get_area_start(cell, choice, grid_start);
 
 	int main_increment = 0, secondary_increment = 0;
-
 	/*
 		Incrementing over a row or a column is 8 same equal steps.
 		Incrementing over a chamber is 3 small steps, then a jump to the next row (6 cells).
@@ -152,9 +146,9 @@ int** get_area(int *cell, int choice, int *grid_start){
 	
 		for(int main_loop = 0; main_loop < 3; ++main_loop){
 
-			*container_pointer = cell_pointer;
-			++container_pointer;
+			*(container_pointer++) = cell_pointer;
 			cell_pointer += main_increment;
+			
 		}
 
 		cell_pointer += secondary_increment;
