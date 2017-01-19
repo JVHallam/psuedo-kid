@@ -148,7 +148,7 @@ int** get_area(int *cell, int choice, int *grid_start){
 
 			*(container_pointer++) = cell_pointer;
 			cell_pointer += main_increment;
-			
+
 		}
 
 		cell_pointer += secondary_increment;
@@ -169,17 +169,22 @@ BOOL is_present(int value, int **area){
 	return FALSE;
 }
 
-
+BOOL is_full(int **area){
+	return is_present(0, area);
+}
 
 /*Function does not take into account if a cell is already a non zero value.*/
 BOOL is_appropriate(int *cell, int value, int* grid_start){
+	/*
+		Don't try to optimise this function. It's written so that free can be called in an
+		easy and careful manor.
+	*/
 	BOOL is_cell_appropriate = TRUE;
-	for(int choice = 1; choice <= 3; ++choice){
 
+	for(int choice = 1; choice <= 3; ++choice){
 		int **area = get_area(cell, choice, grid_start);
 
 		BOOL is_value_present = is_present(value, area);
-
 		free(area);
 		area = 0;
 
@@ -231,25 +236,7 @@ BOOL solve_area(int *cell, int choice, int* grid_start){
 	return is_changed;
 }
 
-BOOL is_full(int **area){
-	for(int **cell_ptr = area; cell_ptr < (area + 9); ++cell_ptr){
-		if(**cell_ptr == 0){
-			return FALSE;
-		}
-	}
-	return TRUE;
-}
 
-/*Returns true, if all grid values are non-zero*/
-/*
-BOOL is_complete(int *grid_start){
-	for(int chamber_index = 0; chamber_index < 9; ++chamber_index){
-		int *cell = grid_traverse(CHAMBER, chamber_index, grid_start);
-
-
-	}
-}
-*/
 
 void compute_board(int *grid_start){
 	/*Until a loop over has made no changes, continue to call solve_area*/
