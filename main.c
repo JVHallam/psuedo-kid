@@ -261,10 +261,8 @@ BOOL solve_area(int *cell, int choice, int* grid_start){
 
 void compute_board(int *grid_start){
 	/*Until a loop over has made no changes, continue to call solve_area*/
-	BOOL is_changed = TRUE;
-
-	while(is_changed){
-		is_changed = FALSE;
+	
+	for(BOOL is_changed = TRUE; is_changed != FALSE; is_changed = FALSE){
 
 		for(int choice = 1; choice <= 3; ++choice){
 
