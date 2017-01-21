@@ -1,3 +1,5 @@
+#include <fcntl.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -62,6 +64,26 @@ typedef int BOOL;
 
 
 */
+
+/*File Parsing*/
+int* parse_file_grid(char* file_path){
+
+	FILE *fp = fopen(file_path, "r");
+
+	int* grid = (int*)calloc(81, sizeof(int));
+	int* grid_pointer = grid;
+
+	for(int c = 0; (c = fgetc(fp)) != EOF;){
+		if(c != '\n' && c != ' '){
+			/*This is a bit of a hack, but atoi was being a bitch*/
+			int d = c - '0'; 
+			*(grid_pointer++) = d;
+		}
+	}
+
+	fclose(fp);
+	return grid;
+}
 
 /*=-=-=-Traversing Functions.=-=-=-*/
 
@@ -279,6 +301,19 @@ int main(){
 	int holder = 0;
 	
 	printf("Solve_area has completed\n");
+
+	int* file_holder = parse_file_grid("abc.puzzle");
+
+	compute_board(file_holder);
+
+	for(int i = 0, *pGrid = file_holder; i < 81; ++i){
+		if(i % 9 == 0){
+			putchar('\n');
+		}
+		printf("%i", *(pGrid++));
+
+	}
+	putchar('\n');
 
 	return 0;
 }
