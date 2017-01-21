@@ -9,8 +9,8 @@
 #define CELL 4
 
 typedef int BOOL;
-#define TRUE 1;
-#define FALSE 0;
+#define TRUE 1
+#define FALSE 0
 
 /*
 	0  1  2		3  4  5		6  7  8
@@ -261,11 +261,10 @@ BOOL solve_area(int *cell, int choice, int* grid_start){
 
 void compute_board(int *grid_start){
 	/*Until a loop over has made no changes, continue to call solve_area*/
-	BOOL is_changed = TRUE;
 
-	while(is_changed){
+	for(BOOL is_changed = TRUE; is_changed;){
 		is_changed = FALSE;
-
+	
 		for(int choice = 1; choice <= 3; ++choice){
 
 			for(int area_index = 0; area_index < 9; ++area_index){
@@ -282,26 +281,7 @@ void compute_board(int *grid_start){
 }
 
 int main(){
-	int grid[9][9] = {
-		{ 3, 7, 6,		4, 9, 1,		2, 0, 0 }, //0
-		{ 2, 0, 0,		0, 0, 0,		0, 0, 1 }, //1
-		{ 0, 0, 5,		0, 2, 0,		4, 6, 0 }, //2
-
-		{ 9, 6, 0,		8, 0, 0,		0, 0, 7 }, //3
-		{ 0, 0, 3,		0, 0, 0,		5, 0, 0 }, //4
-		{ 1, 0, 0,		0, 0, 2,		0, 9, 4 }, //5
-
-		{ 0, 2, 7,		0, 1, 0,		8, 0, 0 }, //6
-		{ 4, 0, 0,		0, 0, 0,		0, 0, 6 }, //7
-		{ 0, 0, 1,		2, 4, 3,		9, 7, 5 }, //8
-	};
-
-	compute_board(&grid[0][0]);
-
-	int holder = 0;
 	
-	printf("Solve_area has completed\n");
-
 	int* file_holder = parse_file_grid("abc.puzzle");
 
 	compute_board(file_holder);
@@ -314,6 +294,8 @@ int main(){
 
 	}
 	putchar('\n');
+
+	printf("Board solving has completed.\n");
 
 	return 0;
 }
