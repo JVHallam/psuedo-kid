@@ -4,46 +4,47 @@
 #include <stdlib.h>
 #include "psuedokid.h"
 
-/*File Parsing*/
-/*
-int* parse_file_grid(char* file_path){
-
-	FILE *fp = fopen(file_path, "r");
-
-	int* grid = (int*)calloc(81, sizeof(int));
-	int* grid_pointer = grid;
-
-	for(int c = 0; (c = fgetc(fp)) != EOF;){
-		if(c != '\n' && c != ' '){
-			
-			int d = c - '0'; 
-			*(grid_pointer++) = d;
-		}
-	}
-
-	fclose(fp);
-	return grid;
-}
-*/
-
 int* parse_file_to_grid(FILE* fp){
 
 	int* grid = (int*)calloc(81, sizeof(int));
 	int* grid_pointer = grid;
 
+	int cell_counter = 0;
+
 	for(int c = 0; (c = fgetc(fp)) != EOF;){
 		if(c != '\n' && c != ' '){
-			/*This is a bit of a hack, but atoi was being a bitch*/
+			/*
+				This is a minor hack to convert ascii numbers into their integer
+				counterparts.
+			*/
 			int d = c - '0'; 
-			*(grid_pointer++) = d;
+
+			//If it's valid
+			if( (d >= 0 && d <= 9) && (cell_counter < 81)){
+				*(grid_pointer++) = d;
+				++cell_counter;
+			}
+			else{
+				free(grid);
+				printf("d: %i\n", d);
+				grid = NULL;
+				break;
+			}
 		}
+	}
+
+	if(cell_counter != 81 && grid != NULL){
+		free(grid);
+		char* exact_error = (cell_counter > 81) ? "more" : "less";
+		printf("There are %s than 81 cell values\n", exact_error);
+		grid = NULL;
 	}
 
 	return grid;
 }
 
-/*=-=-=-Traversing Functions.=-=-=-*/
 
+/*=-=-=-Traversing Functions.=-=-=-*/
 /*Choice being column, row, chamber, cell*/
 int* grid_traverse(int choice, int index, int* grid_start){
 	int *destination = grid_start;
@@ -66,6 +67,7 @@ int* grid_traverse(int choice, int index, int* grid_start){
 	}
 	return destination;
 }
+
 
 /*Is called inside of get_area*/
 int* get_area_start(int* current_cell, int choice, int* grid_start){
@@ -92,6 +94,7 @@ int* get_area_start(int* current_cell, int choice, int* grid_start){
 
 	return grid_traverse(choice, choice_index, grid_start);
 }
+
 
 /*get_area has calls to Calloc, must always be paired with free.*/
 int** get_area(int *cell, int choice, int *grid_start){
@@ -136,8 +139,8 @@ int** get_area(int *cell, int choice, int *grid_start){
 	return container_area;
 }
 
-/*=-=-=-=-Logical Analysis Functions=-=-=-*/
 
+/*=-=-=-=-Logical Analysis Functions=-=-=-*/
 /*Return true if a value is present in an area*/
 BOOL is_present(int value, int **area){
 	for(int **area_ptr = area; area_ptr < (area + 9); ++area_ptr){
@@ -148,9 +151,11 @@ BOOL is_present(int value, int **area){
 	return FALSE;
 }
 
+
 BOOL is_full(int **area){
 	return is_present(0, area);
 }
+
 
 /*Function Doesn't take into account if the cell has a non-zero value*/
 BOOL is_appropriate(int *cell, int value, int* grid_start){
@@ -174,6 +179,7 @@ BOOL is_appropriate(int *cell, int value, int* grid_start){
 	}
 	return is_cell_appropriate;
 }
+
 
 /*Should Be set to return TRUE if a value was changed, FALSE if not.*/
 BOOL solve_area(int *cell, int choice, int* grid_start){
@@ -215,6 +221,7 @@ BOOL solve_area(int *cell, int choice, int* grid_start){
 	area = 0;
 	return is_changed;
 }
+
 
 void compute_board(int *grid_start){
 	/*Until a loop over has made no changes, continue to call solve_area*/
