@@ -12,7 +12,13 @@ typedef int BOOL;
 #define FALSE 0
 
 //Calls Calloc, returns a 9 x 9 int array representing the sudoku board.
-int* parse_file_grid(char* file_path);
+//int* parse_file_grid(char* file_path);
+
+/*
+	Calls calloc, returns a 9 x 9 int array representing the sudoku board.
+	If the file is not formatted correctly, will return null.
+*/
+int* parse_file_to_grid(FILE* fp);
 
 /*
 	Traversing Functions

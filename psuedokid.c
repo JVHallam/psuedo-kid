@@ -5,9 +5,28 @@
 #include "psuedokid.h"
 
 /*File Parsing*/
+/*
 int* parse_file_grid(char* file_path){
 
 	FILE *fp = fopen(file_path, "r");
+
+	int* grid = (int*)calloc(81, sizeof(int));
+	int* grid_pointer = grid;
+
+	for(int c = 0; (c = fgetc(fp)) != EOF;){
+		if(c != '\n' && c != ' '){
+			
+			int d = c - '0'; 
+			*(grid_pointer++) = d;
+		}
+	}
+
+	fclose(fp);
+	return grid;
+}
+*/
+
+int* parse_file_to_grid(FILE* fp){
 
 	int* grid = (int*)calloc(81, sizeof(int));
 	int* grid_pointer = grid;
@@ -20,7 +39,6 @@ int* parse_file_grid(char* file_path){
 		}
 	}
 
-	fclose(fp);
 	return grid;
 }
 
