@@ -297,5 +297,7 @@ int main(){
 
 	printf("Board solving has completed.\n");
 
+	free(file_holder);
+
 	return 0;
 }
