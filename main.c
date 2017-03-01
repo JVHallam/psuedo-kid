@@ -5,9 +5,8 @@
 #include "psuedokid.h"
 
 int main(int argc, char** argv){
-
+	
 	if(argc > 1){
-
 		FILE* fp = fopen(*(++argv), "r");
 
 		if(fp){
@@ -28,11 +27,11 @@ int main(int argc, char** argv){
 				perror("File not correctly formatted.");
 				exit(1);
 			}
-
 		}
 		else{
 			perror("File not found");
 		}
+
 	}
 	else{
 		puts("No arguements given.");

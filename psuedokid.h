@@ -65,8 +65,6 @@ void compute_board(int *grid_start);
 /*
 	Misc. Functions.
 */
-void print_board(int* board){
-	
-}
+void print_board(int* board);
 
 #endif

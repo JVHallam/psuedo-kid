@@ -3,51 +3,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "psuedokid.h"
-/*
-int* parse_file_to_grid(FILE* fp){
-
-	int* grid = (int*)calloc(81, sizeof(int));
-	int* grid_pointer = grid;
-
-	int cell_counter = 0;
-
-	for(int c = 0; (c = fgetc(fp)) != EOF;){
-		if(c != '\n' && c != ' '){
-			
-			int d = c - '0'; 
-
-			//If it's valid
-			if( (d >= 0 && d <= 9) && (cell_counter < 81)){
-				*(grid_pointer++) = d;
-				++cell_counter;
-			}
-			else{
-				free(grid);
-				printf("d: %i\n", d);
-				grid = NULL;
-				break;
-			}
-		}
-	}
-
-	if(cell_counter != 81 && grid != NULL){
-		free(grid);
-		char* exact_error = (cell_counter > 81) ? "more" : "less";
-		printf("There are %s than 81 cell values\n", exact_error);
-		grid = NULL;
-	}
-
-	return grid;
-}
-*/
 
 int* parse_file_to_grid(FILE* fp){
 	int* board = (int*)calloc(81, sizeof(int));
-	int* grid_pointer = grid;
+	int* grid_pointer = board;
 	int cell_counter = 0;
 
 	for(int input = 0; (input = fgetc(fp)) != EOF;){
-		if(c != '\n' && c != ' '){
+		if(input != '\n' && input != ' '){
 			//Minor hack to convert ascii number characters to their integer counterparts.
 			int current_char = input - '0';
 
@@ -62,12 +25,22 @@ int* parse_file_to_grid(FILE* fp){
 				}
 				else{
 					puts("More than 81 valid characters present.");
+					++cell_counter;
+
 				}
-				free(board);
-				board = NULL;
 				break;
 			}
 		}
+	}
+
+	if(cell_counter != 81){
+		puts("The wrong amount of cell values were given.");
+
+		char* error = (cell_counter > 81) ? "more than" : "only";
+
+		printf("81 should have been given, where as %s %i are present\n",error,cell_counter);
+		free(board);
+		board = NULL;
 	}
 	return board;
 }
