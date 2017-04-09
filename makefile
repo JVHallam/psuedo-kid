@@ -1,2 +1,3 @@
-all:
-	rm main; gcc main.c psuedokid.c -o main -g; ./main;
+all: 
+	gcc main.c "psuedokid/psuedokid.c" "traversal/traversal.c" "logic/logic.c" -o main -g; 
+	./main;

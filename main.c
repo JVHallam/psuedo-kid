@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "psuedokid.h"
+#include "psuedokid/psuedokid.h"
 
 int main(int argc, char** argv){
 	
