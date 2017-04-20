@@ -25,4 +25,36 @@ Why:
 	I could bundle all of this into the new munit file. A couple of #define functions and we're done.
 
 
-
+So what would happen?:
+	you'd have a test_function	
+	
+	The test function calls assert
+	
+	you'd have a function to run all tests
+	
+	that would contain mu_run_test(test_function_pointer);
+	
+		If a test passes, it should move on with no changes
+		
+		If the test fails, it should be appended onto our linked list of failed
+		tests
+		
+	Once the tests have finished running:
+		If there are no failed tests:
+			Let the user know that this file finished testing with 0 errors
+			
+		If there are failed tests
+			Print the message and the tests' number
+			
+What's needed:
+	mu_assert()
+	
+	mu_run_test()
+	
+	append_list
+	
+	create_error_struct
+	
+	error_struct
+	
+	print_list_also_freeing_the_space_taken_up
