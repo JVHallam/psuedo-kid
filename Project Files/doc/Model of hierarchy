@@ -1,0 +1,15 @@
+I want to keep things simple.
+I want a list of low level functions that don't call other non-standard library functions inside of them.
+
+I then want some functions that build on that, and pipe things between them.
+
+Higher level:
+    psuedokid
+
+Low level:
+    Traversal
+    Logic
+
+At the minute, this isn't the case. But this is the end hope. That way, testing is more segmented.
+It means that functions that a function that calls a function that allocates memory, can also free that memory.
+

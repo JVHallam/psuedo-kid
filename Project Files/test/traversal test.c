@@ -2,6 +2,7 @@
 #include "minunit.h"
 #include "../include/constants.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 int test_grid[9][9] = 	{
 							{0, 1, 2, 		3, 4, 5, 		6, 7, 8},
@@ -38,12 +39,22 @@ static char* test_get_area_start_chambers();
 
 static char* test_get_area_rows();
 
-static char* test_get_area_rows();
+static char* test_get_area_columns();
 
-static char* test_get_area_rows();
+static char* test_get_area_chambers();
 
 //Finally, Run the tests.
 static char* run_all_tests();
+
+//Memory addressed of the test_grid
+void print_grid_addresses(){
+	for(int i = 0; i < 9; ++i){
+		for(int j = 0; j < 9; ++j){
+			printf("%p, ", &test_grid[i][j]);
+		}
+		puts("");
+	}
+}
 
 int main(){
 	char* result = run_all_tests();
@@ -126,7 +137,7 @@ static char* test_get_area_start_columns(){
 	for(int index = 0; index < 9; ++index){
 		int* test_cell = &test_grid[index][index];
 
-		int* area_start = get_area_start(test_cell, ROW, &test_grid[0][0]);
+		int* area_start = get_area_start(test_cell, COLUMN, &test_grid[0][0]);
 
 		mu_assert("Not getting the correct area start for COLUMN!", \
 					area_start == &test_grid[0][index]);
@@ -136,33 +147,92 @@ static char* test_get_area_start_columns(){
 }
 
 static char* test_get_area_start_chambers(){
-	//Again, we'll just get a cross section
-
 	//Will need to test with 1 cell from each chamber. Have each cell be positioned in differently relative
 	//to the chamber's start from the last.
-
 	//00, 04, 08,
 	//40, 44, 48,
 	//80, 84, 88 
 
 	int chamber_index = 0;
 
-	for(int row_index = 0; row_index < 2; ++row_index){
+	for(int row_index = 0; row_index < 3; ++row_index){
 
-		for(int col_index = 0; col_index < 2; ++col_index){
+		for(int col_index = 0; col_index < 3; ++col_index){
+
 
 			int* test_cell = &test_grid[row_index * 4][col_index * 4];
-
-			int* guarenteed_start_of_area = grid_traverse(CHAMBER, chamber_index++, grid_start);
+			
+			int* guarenteed_start_of_area = grid_traverse(CHAMBER, \
+												chamber_index++, &test_grid[0][0]);
 
 			mu_assert("Not getting the correct area start for CHAMBER!", \
-						guarenteed_start_of_area == get_area_start(test_cell, CHAMBER, tests_grid) );
+			guarenteed_start_of_area == get_area_start(test_cell, CHAMBER, &test_grid[0][0]));
 		}
 	}
 
 	return 0;
 }
 
+//int** get_area(int *cell, int choice, int *grid_start)
+static char* test_get_area_rows(){
+	//Get an area, then compare it to the actual area.
+
+	for(int index = 0; index < 9; ++index){
+		//Get a cross section
+		int* target_cell = &test_grid[index][index];
+		int** area_gotten = get_area(target_cell, ROW, &test_grid[0][0]);
+		int** area_to_free = area_gotten;
+		int* area_correct = test_grid[index];
+
+		//compare the 2 arrays
+		for(int cell_index = 0; cell_index < 9; ++cell_index){
+			mu_assert("get_area is not working for rows", *(area_gotten++) == area_correct++);
+		}
+
+		free(area_to_free);
+	}
+
+	return 0;
+}
+
+static char* test_get_area_columns(){
+	for(int index = 0; index < 9; ++index){
+		//Get a cross section
+		int* target_cell = &test_grid[index][index];
+
+		int** area_gotten = get_area(target_cell, COLUMN, &test_grid[0][0]);
+		int** area_to_free = area_gotten;
+		//This is columns, so increment by 9 later on
+		int* area_correct = &test_grid[0][index];
+
+		//compare the 2 arrays
+		for(int cell_index = 0; cell_index < 9; ++cell_index){
+			mu_assert("get_area is not working for COLUMN!", *(area_gotten++) == area_correct);
+			area_correct += 9;
+		}
+
+		free(area_to_free);
+	}
+	return 0;	
+}
+
+
+/*
+static char* test_get_area_chambers(){
+	for(int index = 0; index < 9; ++index){
+		//Will need to test with 1 cell from each chamber. Have each cell be positioned in differently relative
+		//to the chamber's start from the last.
+		//00, 04, 08,
+		//40, 44, 48,
+		//80, 84, 88 
+
+		int* test_cell = &test_grid[row_index * 4][col_index * 4];
+
+		int** area
+	}
+
+}
+*/
 
 static char* run_all_tests(){
 
@@ -173,6 +243,9 @@ static char* run_all_tests(){
 	mu_run_test(test_get_area_start_rows);
 	mu_run_test(test_get_area_start_columns);
 	mu_run_test(test_get_area_start_chambers);
+
+	mu_run_test(test_get_area_rows);
+	mu_run_test(test_get_area_columns);
 
 	return 0;
 }
