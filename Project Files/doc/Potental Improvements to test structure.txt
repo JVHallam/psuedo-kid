@@ -1,0 +1,28 @@
+At the minute, the following happens:
+	You have an MU assert in a function
+		returns a string if an assertion fails
+
+		returns a 0 if the assert succeeds.
+
+	MU run test runs the function with the assert
+		Stops early	if one of the mu asserts fails
+
+What i could have:
+	A linked list of error structs
+
+	failure_struct:	
+		The message given from the failed function
+
+		the value of tests_run at the time
+
+Each failed tests appends the linked list.
+
+At the end of the testing, the linked list is printed to screen.
+
+Why:
+	The fact that minunit is 4 lines of code is nice, but i would rather it didn't die the moment a function failed.
+
+	I could bundle all of this into the new munit file. A couple of #define functions and we're done.
+
+
+

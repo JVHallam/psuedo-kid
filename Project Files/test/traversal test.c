@@ -33,6 +33,16 @@ static char* test_get_area_start_columns();
 
 static char* test_get_area_start_chambers();
 
+//Calls Calloc, creates a 9 x 1 array containing pointers to each cell in given area.
+//int** get_area(int *cell, int choice, int *grid_start);
+
+static char* test_get_area_rows();
+
+static char* test_get_area_rows();
+
+static char* test_get_area_rows();
+
+//Finally, Run the tests.
 static char* run_all_tests();
 
 int main(){
@@ -96,7 +106,6 @@ static char* test_grid_traverse_chambers(){
 
 static char* test_get_area_start_rows(){
 	//int* get_area_start(int* current_cell, int choice, int* grid_start)
-
 	//We'll just go diagonal to get a cross section
 
 	for(int index = 0; index < 9; ++index){
@@ -111,6 +120,50 @@ static char* test_get_area_start_rows(){
 	return 0;
 }
 
+static char* test_get_area_start_columns(){
+	//We'll just go diagonal to get a cross section
+
+	for(int index = 0; index < 9; ++index){
+		int* test_cell = &test_grid[index][index];
+
+		int* area_start = get_area_start(test_cell, ROW, &test_grid[0][0]);
+
+		mu_assert("Not getting the correct area start for COLUMN!", \
+					area_start == &test_grid[0][index]);
+	}
+
+	return 0;
+}
+
+static char* test_get_area_start_chambers(){
+	//Again, we'll just get a cross section
+
+	//Will need to test with 1 cell from each chamber. Have each cell be positioned in differently relative
+	//to the chamber's start from the last.
+
+	//00, 04, 08,
+	//40, 44, 48,
+	//80, 84, 88 
+
+	int chamber_index = 0;
+
+	for(int row_index = 0; row_index < 2; ++row_index){
+
+		for(int col_index = 0; col_index < 2; ++col_index){
+
+			int* test_cell = &test_grid[row_index * 4][col_index * 4];
+
+			int* guarenteed_start_of_area = grid_traverse(CHAMBER, chamber_index++, grid_start);
+
+			mu_assert("Not getting the correct area start for CHAMBER!", \
+						guarenteed_start_of_area == get_area_start(test_cell, CHAMBER, tests_grid) );
+		}
+	}
+
+	return 0;
+}
+
+
 static char* run_all_tests(){
 
 	mu_run_test(test_grid_traverse_rows);
@@ -118,6 +171,8 @@ static char* run_all_tests(){
 	mu_run_test(test_grid_traverse_chambers);
 
 	mu_run_test(test_get_area_start_rows);
+	mu_run_test(test_get_area_start_columns);
+	mu_run_test(test_get_area_start_chambers);
 
 	return 0;
 }
