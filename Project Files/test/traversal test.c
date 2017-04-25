@@ -216,23 +216,40 @@ static char* test_get_area_columns(){
 	return 0;	
 }
 
-
-/*
 static char* test_get_area_chambers(){
-	for(int index = 0; index < 9; ++index){
-		//Will need to test with 1 cell from each chamber. Have each cell be positioned in differently relative
-		//to the chamber's start from the last.
-		//00, 04, 08,
-		//40, 44, 48,
-		//80, 84, 88 
+	for(int col_index = 0; col_index < 3; ++col_index){
+		for(int row_index = 0; row_index < 3; ++row_index){
 
-		int* test_cell = &test_grid[row_index * 4][col_index * 4];
+			int* test_cell = &test_grid[col_index][row_index];
+			int** test_area = get_area(test_cell, CHAMBER, &test_grid[0][0]);	
+			int* correct_area_start = get_area_start(test_cell, CHAMBER, &test_grid[0][0]);
+			int* test_area_start = *test_area;
 
-		int** area
+			/*
+				This doesn't work.
+
+				test_area_start should be a double pointer that's derefenced
+				when being compared to correct_area_start.
+			*/
+
+			for(int i = 0; i < 3; ++i){
+
+				for(int j = 0; j < 3; ++j){
+
+					printf("correct: %p, test_area_start: %p\n", correct_area_start, test_area_start);
+
+					mu_assert("Area gotten for chamber is incorrect!", correct_area_start++ == test_area_start++);
+				}
+
+				correct_area_start += 0;
+			}
+			free(test_area);
+		}
 	}
 
+	print_grid_addresses();
+	return 0;
 }
-*/
 
 static char* run_all_tests(){
 
@@ -246,6 +263,7 @@ static char* run_all_tests(){
 
 	mu_run_test(test_get_area_rows);
 	mu_run_test(test_get_area_columns);
+	mu_run_test(test_get_area_chambers);
 
 	return 0;
 }

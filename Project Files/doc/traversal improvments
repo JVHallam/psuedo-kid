@@ -1,0 +1,10 @@
+Looking over the tests, it's clear that a useful thing would be an actual navigation function:
+	int* get_cell(CHOICE, choice_index, index_in_choice, grid_start);
+
+	so i can just go, ROW, first row, first cell in row.
+
+	Same with chamber and columns
+
+	I should also break this down, potentially, into one function that calls 3 smaller?
+
+	There's a clear lack of abstraction in the code at the minute.
