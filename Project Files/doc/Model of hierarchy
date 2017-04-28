@@ -1,15 +1,30 @@
-I want to keep things simple.
-I want a list of low level functions that don't call other non-standard library functions inside of them.
+I want things to be made as modular and simple as popular, but this time, i want to do it right:
 
-I then want some functions that build on that, and pipe things between them.
+Grid.h:
+    This will contain any constants that i decide to use, ROW CHAMBER CELL, etc.
 
-Higher level:
-    psuedokid
+    It will contain the definitions for a cell.
 
-Low level:
-    Traversal
-    Logic
+    It will contain the constructor for the grid.
 
-At the minute, this isn't the case. But this is the end hope. That way, testing is more segmented.
-It means that functions that a function that calls a function that allocates memory, can also free that memory.
+    It will also contain the the definition for the function that parses a file into a grid.
+
+Traversal.h:
+    This is going to contain only code that relates to getting an area of the grid.
+
+Logic.h
+    This is going to contain functions that return only boolean values. is_present, is_valid, is_full
+
+Algorithms.h:
+    This is going to contain my algorithms. They'll pull on the data from the previous headers to solve the grid.
+
+Main.c:
+    Parse file.
+
+    Call algorithms until complete or stuck.
+
+    End.
+
+
+
 

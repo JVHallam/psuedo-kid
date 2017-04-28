@@ -1,0 +1,5 @@
+Single Spot algorithm:
+    The most basic of sudoku algorithms. The idea that a number can only occupy a single spot in an area.
+
+    After eliminating all other spots that a value can be put into, without violating sudoku rule, you should be left
+    with a single location where a value can be placed.
