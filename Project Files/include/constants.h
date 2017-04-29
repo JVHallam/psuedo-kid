@@ -1,6 +1,5 @@
 #ifndef CONTSTANTS_H_
 #define CONTSTANTS_H_
-
 	//Choices
 	#define COLUMN 1
 	#define ROW 2
@@ -10,5 +9,4 @@
 	typedef int BOOL;
 	#define TRUE 1
 	#define FALSE 0
-
 #endif

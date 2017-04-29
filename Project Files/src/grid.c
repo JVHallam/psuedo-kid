@@ -46,3 +46,56 @@ void free_grid(cell** grid_start){
 	}
 	free(grid_start);
 }
+
+
+
+cell** parse_file_to_grid(char* file_name){
+	FILE *fp = fopen(file_name, 'r');
+
+	if(fp){
+		cell** grid = new_grid();
+		cell** grid_pointer = grid;
+		int input = 0;
+		int cell_counter = 0;
+
+		for(input = fgetc(fp); input != EOF; input = fgetc(fp)){
+			int current_char = input - '0';
+
+			if((current_char >= 0 && current_char <= 9) && (cell_counter < 81)){
+				(*grid_pointer)->value = current_char;
+				if(current_char != 0){
+					(*grid_pointer)->occupied = TRUE;
+				}
+
+				++grid_pointer;
+				++cell_counter;
+			}
+			else{
+				if(current_char < 0 || current_char > 9){
+					printf("Invalid Character '%c' present\n", input);
+				}
+				else{
+					puts("More than 81 valid character present.");
+					++cell_counter;
+				}
+				break;
+			}
+		}
+		if(cell_counter != 81){
+			puts("The wrong amount of cell values were given.");
+
+			char* error = (cell_counter > 81) ? "more than" : "only";
+
+			printf("81 should have been given, where as %s %i are present\n", error, cell_counter);
+
+			free_grid(grid);
+			grid = 0;
+		}
+		return grid;
+	}
+	else{
+		return 0;
+	}
+}
+
+
