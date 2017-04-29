@@ -1,0 +1,20 @@
+Single Spot algorithm:
+    The most basic of sudoku algorithms. The idea that a number can only occupy a single spot in an area.
+
+    After eliminating all other spots that a value can be put into, without violating sudoku rule, you should be left
+    with a single location where a value can be placed.
+
+    This algorithm can only be caried out on areas.
+
+
+Single Occupant:
+    It's sort of like the inverse to the above. This takes a cell and instead, finds the only number that can be
+    entered into it without breaking sudoku rule.
+
+    A value for a cell may fit the single occupant rule at times it doesn't quite fit the single spot algorithm.
+
+Phantom Occupancy:
+    If 2 cells in the same area have only 2 possible occupants and both list of occupants match, these cells are as
+    good as occupied when using the single spot algorithm.
+
+    This can only be carried out on areas.
