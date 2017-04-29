@@ -33,10 +33,16 @@ cell* new_cell();
 //Create a 9 x 9 array of cell pointers.
 cell** new_grid();
 
-//Parse file and make it into a grid:
-
-
 //Free the grid after usage
 void free_grid(cell** grid_start);
+
+cell** parse_file_to_grid(char* file_name);
+
+//Sometimes it's easier to use a bunch of printfs, rather than a debugger.
+void print_grid_values(cell** grid);
+
+void print_grid_occupied(cell** grid);
+
+void print_grid_valid_values(cell** grid);
 
 #endif
