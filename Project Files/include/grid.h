@@ -23,14 +23,20 @@ typedef struct cstruct{
 }cell;
 
 /*
-	Instantiates a cell on the heap with:
-		value set to 0
-		occupied set to 0
-		each value in valid_values set to TRUE
+	Calls Malloc and sets:
+		Value to 0
+		Occupied to FALSE
+		each value in valid_values is set to TRUE
 */
 cell* new_cell();
 
 //Create a 9 x 9 array of cell pointers.
 cell** new_grid();
+
+//Parse file and make it into a grid:
+
+
+//Free the grid after usage
+void free_grid(cell** grid_start);
 
 #endif
