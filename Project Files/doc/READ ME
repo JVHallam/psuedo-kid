@@ -1,0 +1,17 @@
+This is supposed to serve as documentation on how the program works, or something along those lines.
+
+What's a puzzle file:
+	A puzzle file represents an unsolved sudoku puzzle.
+
+	It must contain numbers in ascii value.
+
+	It must contain 81 numbers.
+
+	Empty spaces on a sudoku are represented by the value 0
+
+	Non-empty spaces are represented by their value from 1 to 9
+
+	If non-numeric values are present (Letters, spaces, newlines) the program will skip over them 
+	and move onto the next value.
+	Due to this, it doesn't matter what's in the file, aslong as it contains 81 values from 0 to 
+	9.
