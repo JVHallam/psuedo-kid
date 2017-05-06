@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <minunit.h>
+#include "../include/minunit.h"
 #include "../include/grid.h"
 #include <stdlib.h>
 
@@ -16,10 +16,15 @@ int tests_run = 0;
 
 int main(){
 
-	char* result = run_all_tests();
+	char* result = "Error, a function didn't return a value";
+	result = run_all_tests();
 
 	if(result){
+		puts("Testing Encountered this failure:");
 		printf("\n%s\n\n", result);
+	}
+	else{
+		puts("Testing completed with no errors");
 	}
 
 	printf("Tests run: %i\n", tests_run);
@@ -76,7 +81,7 @@ static char* test_parse_file_to_grid_with_invalid_input(){
 
 	//Don't forget to make sure that number_of_files is the number of invalid files
 	//Otherwise, segfaults. Yay! Best error ever. So descriptive.
-	int number_of_files = 3;
+	int number_of_files = 5;
 	static char* invalid_files[] = {
 		"test/resources/invalid1.puzzle",
 		"test/resources/invalid2.puzzle",
@@ -104,16 +109,11 @@ static char* test_parse_file_to_grid_with_valid_input(){
 		"test/resources/valid2.puzzle"
 	};
 
-	/*
 	for( \
 		char** cur_file = valid_files; \
 		cur_file < &(valid_files[number_of_files]); \
 		++cur_file
 	){
-	*/
-	char** cur_file = &valid_files[0];
-	for(int i = 0; i < 2; ++i){
-	//start
 		cell** parsed_grid = parse_file_to_grid(*cur_file);
 
 		cell** grid_ptr = parsed_grid;
@@ -153,6 +153,8 @@ static char* test_parse_file_to_grid_with_valid_input(){
 		parsed_grid = 0;
 
 	}//end
+
+	return 0;
 }
 
 static char* test_parse_file_to_grid(){
@@ -203,9 +205,6 @@ static char* test_parse_file_to_grid(){
 
 	return 0;
 }
-
-
-
 
 static char* run_all_tests(){
 	//1
