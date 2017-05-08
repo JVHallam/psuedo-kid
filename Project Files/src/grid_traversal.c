@@ -21,8 +21,6 @@ cell** traverse_to_chamber_start(int index, cell** grid_start);
 
 cell** traverse_to_areas_cell(int index, int choice, cell** area_start, cell** grid_start);
 
-
-
 cell*** initialise_new_area_array(){
 	cell*** area_to_return = (cell***)calloc(9, sizeof(cell**));
 
