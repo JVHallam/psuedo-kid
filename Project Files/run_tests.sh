@@ -1,4 +1,6 @@
 #!/bin/bash
 
 make tests;
-./"bin/grid_tests";
+
+make traversal_tests;
+

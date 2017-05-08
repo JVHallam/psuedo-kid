@@ -1,81 +1,38 @@
+#include "../include/logic.h"
 #include "../include/constants.h"
-#include "../include/traversal.h"
-#include <stdlib.h>
 
-/*Return true if a value is present in an area*/
-BOOL is_present(int value, int **area){
-	for(int **area_ptr = area; area_ptr < (area + 9); ++area_ptr){
-		if(**area_ptr == value){
-			return TRUE;
-		}
-	}
-	return FALSE;
+int get_cell_index(cell** target_cell, cell** grid_start){
+	return target_cell - grid_start;
 }
 
-BOOL is_full(int **area){
-	return is_present(0, area);
+int get_cells_row_index(cell** target_cell, cell** grid_start){
+	int cell_index = get_cell_index(target_cell, grid_start);
+
+	return (cell_index / 9);
 }
 
-/*Function Doesn't take into account if the cell has a non-zero value*/
-BOOL is_appropriate(int *cell, int value, int* grid_start){
-	/*
-		Don't try to optimise this function. It's written so that free can be called in an
-		easy and careful manor.
-	*/
-	BOOL is_cell_appropriate = TRUE;
+int get_cells_column_index(cell** target_cell, cell** grid_start){
+	int cell_index = get_cell_index(target_cell, grid_start);
 
-	for(int choice = 1; choice <= 3; ++choice){
-		int **area = get_area(cell, choice, grid_start);
-
-		BOOL is_value_present = is_present(value, area);
-		free(area);
-		area = 0;
-
-		if(is_value_present){
-			is_cell_appropriate = FALSE;
-			break;
-		}
-	}
-	return is_cell_appropriate;
+	return (cell_index % 9);
 }
 
-/*Should Be set to return TRUE if a value was changed, FALSE if not.*/
-BOOL solve_area(int *cell, int choice, int* grid_start){
-	int **area = get_area(cell, choice, grid_start);
-	BOOL is_changed = FALSE;
+int get_cells_chamber_index(cell** target_cell, cell** grid_start){
+	int row_index = get_cells_row_index(target_cell, grid_start);
+	int column_index = get_cells_column_index(target_cell, grid_start);
 
-	for(int value = 1; value <= 9; ++value){
-		if(is_present(value, area)){
-			continue;
-		}
+	return (((row_index / 3) * 3) + (column_index / 3));
+}
 
-		else{
-			int *appropriate_cell = 0;
-			
-			for(int **cell_ptr = area; cell_ptr < (area + 9); ++cell_ptr){
+BOOL is_present(cell*** test_area, int value){
 
-				if(**cell_ptr == 0 && is_appropriate(*cell_ptr, value, grid_start)){
+	for(int index = 0; index < 9; ++index){
+		cell*** current_cell = test_area + index;
 
-					if(!appropriate_cell){
-						appropriate_cell = *cell_ptr;
-					}
-
-					else{
-						appropriate_cell = 0;
-						break;
-					}
-
-				}
-			}
-
-			if(appropriate_cell){
-				*appropriate_cell = value;
-				is_changed = TRUE;
-			}
+		if( (**current_cell)->value == value){
+			return FALSE;
 		}
 	}
-
-	free(area);
-	area = 0;
-	return is_changed;
+	
+	return TRUE;
 }

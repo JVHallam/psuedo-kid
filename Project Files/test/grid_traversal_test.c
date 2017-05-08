@@ -4,11 +4,33 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*NOTES*/
+	/*
+		This set of tests is extremely messy!
+
+		I thought, for some dumb reason, that hardcoding values would be the best 
+		way to achieve these tests. After some careful consideration, with logic_test.c
+		I decided that it's better to use a forloop, increment over the grid, and
+		check values as i go.
+
+		If i use hard values to check first, just to make sure it passes that test
+		Then increment over the board, it will condense this file down, make it
+		cleaner, cover more outcomes and be easier to maintain.
+
+		God damn, do we write some bad code some days.
+	*/
+/*NOTES*/
+
+
 int tests_run = 0;
 
 cell** test_grid;
 
 static char* test_traverse_to_chamber();
+
+static char* test_get_row();
+
+static char* test_get_column();
 
 static char* run_all_tests();
 
