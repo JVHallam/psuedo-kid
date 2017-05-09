@@ -6,6 +6,11 @@ tests:
 main:
 	echo "Nothing";
 
+all_test:
+	make grid_test; ./bin/grid_tests;
+	make traversal_test; ./bin/traversal_test;
+	make logic_test; ./bin/logic_test;
+
 grid_test:
 	$(CC) $(CFLAGS) "test/grid_tests.c" "src/grid.c" -o "bin/grid_tests";
 	./bin/grid_tests;
