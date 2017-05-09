@@ -104,14 +104,16 @@ static char* test_is_present(){
 
 static char* run_all_tests(){
 	test_grid = parse_file_to_grid("test/resources/valid1.puzzle");
-
-	mu_run_test(test_get_cell_index);
-	mu_run_test(test_get_cells_row_index);
-	mu_run_test(test_get_cells_column_index);
-	mu_run_test(test_get_cells_chamber_index);
-
 	if(test_grid){
+		mu_run_test(test_get_cell_index);
+		mu_run_test(test_get_cells_row_index);
+		mu_run_test(test_get_cells_column_index);
+		mu_run_test(test_get_cells_chamber_index);
+
 		free_grid(test_grid);
+		return 0;
 	}
-	return 0;
+	else{
+		return "Failed to create a valid value for test_grid";
+	}
 }

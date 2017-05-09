@@ -4,24 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/*NOTES*/
-	/*
-		This set of tests is extremely messy!
-
-		I thought, for some dumb reason, that hardcoding values would be the best 
-		way to achieve these tests. After some careful consideration, with logic_test.c
-		I decided that it's better to use a forloop, increment over the grid, and
-		check values as i go.
-
-		If i use hard values to check first, just to make sure it passes that test
-		Then increment over the board, it will condense this file down, make it
-		cleaner, cover more outcomes and be easier to maintain.
-
-		God damn, do we write some bad code some days.
-	*/
-/*NOTES*/
-
-
 int tests_run = 0;
 
 cell** test_grid;
@@ -34,6 +16,7 @@ static char* test_get_column();
 
 static char* run_all_tests();
 
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 int main(){
 	char* result = run_all_tests();
 
@@ -44,11 +27,9 @@ int main(){
 	printf("Tests run: %i\n", tests_run);
 	return result != 0;
 }
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 static char* test_get_chamber(){
-	//This one's easy to improve, grab the forloop from the logic_test.c file
-
-
 	if(test_grid){
 		//Check that it won't take indexes outside of the 0 - 9 range
 		mu_assert(\
@@ -91,24 +72,85 @@ static char* test_get_chamber(){
 		free(test_chamber);
 
 		/*
-			This is going to be a little bit more complicated than for the others:
+			Call get chamber 9 times,
+			stitch the results together to make a new grid.
+			comepare the 2 grids.
+
+			So this one may be un-neccessarily complex, but it works.
+
+			I create a new grid, using only get_chamber but instead of the grid
+			being a 2 dimensional cell array, it's a 1 dimensional chamber array.
+
+			I just call get_chamber() nine times and stitch it together to make a new
+			grid. I then cycle through it, using the most complex set of forloops yet:
+
+				so a grid is a 3 x 3 chamber array. Each row of chambers, contains 3
+				chambers.
+
+				Each chamber is made up of 3 rows.
+
+				Each row is made up of 3 columns.
+
+			The below forloop is meant to cycle through the 1 dimensional chamber array
+			like it were the 2 dimensional cell array, in hopes to preserve the indexes
+			of cells.
+
+			If you're lost, good. It made perfect sense when i wrote this code.
+		*/
+
+		cell*** false_grid[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+		for(int index = 0; index < 9; ++index){
+			false_grid[index] = get_chamber(index, test_grid);
+		}
 
 		for(int row_of_chambers = 0; row_of_chambers < 3; ++row_of_chambers){
 			for(int row_in_chamber = 0; row_in_chamber < 3; ++row_in_chamber){
 				for(int each_chamber = 0; each_chamber < 3; ++each_chamber){
 					for(int column = 0; column < 3; ++column){
 
-		The best way to do this may be to:
-			call get_chamber 9 times
+						//We have to find a way to grab the same chamber as the one we're in.
+						int chamber_were_in = (row_of_chambers * 3) + each_chamber;
 
-			put these chambers into a new grid
+						//Cell index relative to starting cell on real grid.
+						int overall_cell_index = \
+							(row_of_chambers * 27) \
+							+ (row_in_chamber * 9) \
+							+ (each_chamber * 3) \
+							+ column;
+						/*
+							We need to find the index of the cell relative to the start
+							of the chamber.
 
-			compare the 2 grids.
+							so there's the value that increments the most
+								column
 
-			I honestly can't see anything wrong with that.
-		*/
+							The one that we then have to multiply by 2
+								row_in_chamber
 
+							cell_index = (row_in_chamber * 3) + column;							
+						*/
+						int cell_index_in_chamber = (row_in_chamber * 3) + column;
+
+						//printf("C: %i, I: %i\n", chamber_were_in, cell_index_in_chamber);
+						cell*** false_grid_chamber = false_grid[chamber_were_in];
+						cell** current_cell = *(false_grid_chamber + cell_index_in_chamber);
+						cell** real_cell = (test_grid + overall_cell_index);
+
+						mu_assert(\
+							"Values from get_chamber are wrong",\
+							current_cell == real_cell\
+						);
+					}
+				}
+			}
+		}
+
+		//Free the false grid:
+		for(int i = 0; i < 9; ++i){
+			free(false_grid[i]);
+		}
 		return 0;
+
 	}
 	else{
 		return "Test grid is null";
@@ -244,6 +286,6 @@ static char* run_all_tests(){
 		return 0;
 	}
 	else{
-		return "Error, test_grid was not created";
+		return "Failed to create a valid value for test_grid";
 	}
 }

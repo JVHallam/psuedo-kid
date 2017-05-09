@@ -64,7 +64,7 @@ cell** parse_file_to_grid(char* file_name){
 					are_invalid_values_present = 1;
 				}
 				else{
-					puts("More than 81 valid character present.");
+					puts("More than 81 valid characters present.");
 					++cell_counter;
 					break;
 				}
