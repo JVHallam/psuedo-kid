@@ -1,0 +1,26 @@
+gcc -g "test/grid_tests.c" "src/grid.c" -o "bin/grid_tests";
+./bin/grid_tests;
+There were also invalid values present in the file.: Success
+There were also invalid values present in the file.: Invalid argument
+invalid file name: No such file or directory
+another invalid file name: No such file or directory
+The wrong amount of cell values were given.
+81 should have been given, where as only 74 are present
+'test/resources/invalid1.puzzle' is not a valid file
+
+The wrong amount of cell values were given.
+81 should have been given, where as only 55 are present
+'test/resources/invalid2.puzzle' is not a valid file
+
+The wrong amount of cell values were given.
+81 should have been given, where as only 0 are present
+'test/resources/empty.puzzle' is not a valid file
+
+Testing completed with no errors
+Tests run: 4
+gcc -g "test/grid_traversal_test.c" "src/grid_traversal.c" "src/grid.c" -o "bin/grid_traversal_test";
+./bin/grid_traversal_test;
+Tests run: 3
+gcc -g "test/logic_test.c" "src/logic.c" "src/grid.c" -o "bin/logic_test";
+./bin/logic_test;
+Tests run: 4

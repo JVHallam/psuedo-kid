@@ -46,6 +46,9 @@ int main(){
 }
 
 static char* test_get_chamber(){
+	//This one's easy to improve, grab the forloop from the logic_test.c file
+
+
 	if(test_grid){
 		//Check that it won't take indexes outside of the 0 - 9 range
 		mu_assert(\
@@ -87,31 +90,23 @@ static char* test_get_chamber(){
 		}
 		free(test_chamber);
 
-		test_chamber = get_chamber(5, test_grid);
-		mu_assert("traverse to chamber is returning null for valid input", test_chamber != 0);
-		cell* chamber_five[9] = {
-			*(test_grid + 33), 
-			*(test_grid + 34), 
-			*(test_grid + 35), 
-			*(test_grid + 42), 
-			*(test_grid + 43), 
-			*(test_grid + 44), 
-			*(test_grid + 51), 
-			*(test_grid + 52), 
-			*(test_grid + 53)
-		};
-		cell** chamber_five_ptr = chamber_five;
-		test_chamber_ptr = test_chamber;
-		for(int index = 0; index < 9; ++index){
-			cell* chamber_fives_value = *(chamber_five_ptr + index);
-			cell* test_chambers_value = **(test_chamber + index);
-			
-			mu_assert(\
-				"A cell returned for chamber 5 is invalid", \
-				test_chambers_value == chamber_fives_value\
-			);
-		}
-		free(test_chamber);
+		/*
+			This is going to be a little bit more complicated than for the others:
+
+		for(int row_of_chambers = 0; row_of_chambers < 3; ++row_of_chambers){
+			for(int row_in_chamber = 0; row_in_chamber < 3; ++row_in_chamber){
+				for(int each_chamber = 0; each_chamber < 3; ++each_chamber){
+					for(int column = 0; column < 3; ++column){
+
+		The best way to do this may be to:
+			call get_chamber 9 times
+
+			put these chambers into a new grid
+
+			compare the 2 grids.
+
+			I honestly can't see anything wrong with that.
+		*/
 
 		return 0;
 	}
@@ -156,30 +151,25 @@ static char* test_get_row(){
 			test_rows_cell == row_zeros_cell
 		);
 	}
+	free(test_row);
+	test_row = 0;
 
-	test_row = get_row(5, test_grid);
-	mu_assert("get row is returning null with valid args", test_row != 0);
-	cell* row_five[9] = {
-		*(test_grid + 45),
-		*(test_grid + 46),
-		*(test_grid + 47),
-		*(test_grid + 48),
-		*(test_grid + 49),
-		*(test_grid + 50),
-		*(test_grid + 51),
-		*(test_grid + 52),
-		*(test_grid + 53)
-	};
-	for(int cell_index = 0; cell_index < 9; ++cell_index){
-		cell* test_rows_cell = **(test_row + cell_index);
-		cell* row_fives_cell = row_five[cell_index];
+	for(int row_index = 0; row_index < 9; ++row_index){
+		test_row = get_row(row_index, test_grid);
+		cell** actual_row_start = test_grid + (row_index * 9);
 
-		mu_assert(\
-			"Cells being returned by get_row aren't correct",\
-			test_rows_cell == row_fives_cell
-		);
+		for(int cell_index = 0; cell_index < 9; ++cell_index){
+			cell** test_rows_cell = *(test_row + cell_index);
+			cell** actual_rows_cell = actual_row_start + cell_index;
+
+			mu_assert(\
+				"Values being returned from get_row are incorrect",\
+				test_rows_cell == actual_rows_cell
+			);
+		}
+		free(test_row);
+		test_row = 0;
 	}
-
 	return 0;
 }
 
@@ -219,43 +209,41 @@ static char* test_get_column(){
 	}
 
 	free(test_column);
+	test_column = 0;
 
-	test_column = get_column(5, test_grid);
-	mu_assert("get column is returning null with valid args", test_get_column != 0);
-	cell* column_five[9] = {
-		*(test_grid + 5),
-		*(test_grid + 14),
-		*(test_grid + 23),
-		*(test_grid + 32),
-		*(test_grid + 41),
-		*(test_grid + 50),
-		*(test_grid + 59),
-		*(test_grid + 68),
-		*(test_grid + 77)
-	};
-	for(int cell_index = 0; cell_index < 9; ++cell_index){
-		cell* test_columns_cell = **(test_column + cell_index);
-		cell* column_fives_cell = column_five[cell_index];
+	for(int column_index = 0; column_index < 9; ++column_index){
+		test_column = get_column(column_index, test_grid);
+		cell** actual_column_start = (test_grid + column_index);
 
-		mu_assert(\
-			"Cells being returned by get column aren't corret",
-			test_columns_cell == column_fives_cell
-		);
+		for(int cell_index = 0; cell_index < 9; ++cell_index){
+			cell** test_columns_cell = *(test_column + cell_index);
+			cell** actual_columns_cell = (actual_column_start + (cell_index * 9));
+			
+			mu_assert(\
+				"Error, get_column is returning incorrect values",\
+				test_columns_cell == actual_columns_cell	
+			);
+		}
+		free(test_column);
+		test_column = 0;
 	}
-	free(test_column);
-
+	
 	return 0;
 }
 
 static char* run_all_tests(){
 	test_grid = parse_file_to_grid("test/resources/valid1.puzzle");
 
-	mu_run_test(test_get_chamber);
-	mu_run_test(test_get_row);
-	mu_run_test(test_get_column);
-
 	if(test_grid){
+		mu_run_test(test_get_chamber);
+		mu_run_test(test_get_row);
+		mu_run_test(test_get_column);
+
 		free_grid(test_grid);
+
+		return 0;
 	}
-	return 0;
+	else{
+		return "Error, test_grid was not created";
+	}
 }
