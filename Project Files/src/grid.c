@@ -105,5 +105,3 @@ cell** parse_file_to_grid(char* file_name){
 		return 0;
 	}
 }
-
-

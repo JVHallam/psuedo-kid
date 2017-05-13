@@ -1,5 +1,6 @@
 #!/bin/bash
 #Global Variables:
+test_list=( "grid_test" "traversal_test" "logic_test" "porcelain_test");
 declare -i failed_tests_total=0;
 console_output_file="console_output.txt";
 failed_tests_file="failed_tests.txt";
@@ -12,7 +13,6 @@ function failed_test {
 
 function run_test {
 	make $1 &>> $console_output_file;
-
 	if [ $? != 0 ]
 	then
 		failed_test $1;
@@ -33,12 +33,21 @@ then
 fi
 touch $failed_tests_file;
 
-#Declare and run tests:
-test_list=( "grid_test" "traversal_test" "logic_test" );
-for test in "${test_list[@]}"
-do
-	run_test $test;
-done
+#Run tests:
+#for test in "${test_list[@]}"
+#do
+#	run_test $test;
+#done
+if [ -e test_list.txt ]
+then
+	while read current_test
+	do
+		run_test $current_test;
+	done < test_list.txt;
+else
+	echo "test_list.txt wasn't found. Please provide it containing the list of tests to be run.";
+	exit;
+fi
 
 #If any failed
 if [ $failed_tests_total != 0 ]

@@ -1,0 +1,60 @@
+The problem with the current iteration:
+	The intentions of the first part of the rework was 2 things:
+		1) Introduce the usage of unit tests
+
+		2) Use an abstraction layer
+
+	It had succeeded in the unit tests, but not in the creation of an abstraction layer.
+
+	The reason i wanted the abstraction layer was to give the program some moderation. At the
+	minute, anyone can access any part of the grid. Anyone can just go ahead and change any 
+	values.
+	This includes overflowing the current cell* and writing values anywhere.
+	The lack of the abstraction layer means the lack of security.
+
+	It also means that things can get messy. If i wanted all valid_values for all cells in an
+	area to change when i changed a value of a cell, it may not happen. The user had access
+	directly to the grid, why not use a pointer to change the value, rather than a pointer?
+
+Restructure:
+	Set of porcelain commands to be used by the end user:	
+        BOOL new_puzzle(char* file_name);
+            the file_name is the grid_key to be used in future occasions.
+            the puzzle will be stored in a hash table, where the filename is hashed to get the file index.
+
+        clean_up();
+            once everything's said and done, clean up the files that have been opened.
+
+		is_present(area, index, value, grid_key)
+			> logic.h
+
+		get_empties(area + area_index + grid_key)
+			> porcelain_nav.h
+
+			returns a struct:
+				int number_of_empties;
+
+				int index_array[9]:
+					If the cell is empty, set index_array[it's index in the area] = empty's index
+
+		is_occupied(cell_index, grid_key)
+			> logic.h
+
+		get_cell_index(area, area_index, cell's_index_in_that_area)
+			> logic.h
+
+		is_suitable(cell_index, value, grid_key)
+			> logic.h
+
+		BOOL set_value(cell_index, value, grid_key);
+			> porcelain navigation
+
+			set's the value
+
+			return false if it's an illegal value
+
+			updates the valid_values bool array of the values in the surrounding area
+
+
+
+

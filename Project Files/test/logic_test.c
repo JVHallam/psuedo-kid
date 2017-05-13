@@ -176,6 +176,74 @@ static char* test_is_present(){
 	return 0;
 }
 
+static char* test_set_valid_values(){
+	/*
+		puzzles to test this with:
+			only_zeroes.puzzle:
+				This is full of only zeroes for cells. That way,
+				all cells should have all values as a valid value.
+
+			completed.puzzle:
+				This is a completed puzzle, therefore, all cells should have
+				no valid values.
+
+			set_valid_values1.puzzle
+				for each chamber_index:
+					cell 1 of each chamber should have that chamber's index + 1 as an
+					invalid value
+
+					cell 1 of each row should have that rows index + 1 as an invalid
+					value too.
+	*/	
+
+	cell** only_zeroes = parse_file_to_grid("test/resources/only_zeroes.puzzle");
+	if(only_zeroes){
+		/*
+			Cycle through the entire grid:
+				Set valid values on each cell
+
+				Check that all valid values are infact set to TRUE
+		*/
+		free_grid(only_zeroes);
+	}
+	else{
+		return "Failed to parse file to grid";
+	}
+
+	cell** completed = parse_file_to_grid("test/resources/completed.puzzle");
+	if(completed){
+		/*
+			Cycle through the entire grid:
+				Set valid values on each cell
+
+				Check that the all valid values are set to FALSE
+		*/
+		free_grid(completed);
+	}
+	else{
+		return "Failed to parse file to grid";
+	}
+
+	cell** set_valid_values1 = parse_file_to_grid("test/resources/set_valid_values1.puzzle");
+	if(set_valid_values1){
+		/*
+			Cycle through the entire grid:
+				set valid values
+
+			For int each_chamber from range 0 to 8:
+				check (chamber + each_chamber)'s cell of index each_chamber
+				has valid_values[each_chamber + 1] set to FALSE
+		
+		*/
+		free_grid(set_valid_values1);
+	}
+	else{
+		return "Failed to parse file to grid";
+	}
+
+	return 0;
+}
+
 static char* run_all_tests(){
 	test_grid = parse_file_to_grid("test/resources/valid1.puzzle");
 	if(test_grid){
@@ -184,6 +252,7 @@ static char* run_all_tests(){
 		mu_run_test(test_get_cells_column_index);
 		mu_run_test(test_get_cells_chamber_index);
 		mu_run_test(test_is_present);
+		mu_run_test(test_set_valid_values);
 
 		free_grid(test_grid);
 		return 0;
