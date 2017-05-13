@@ -24,3 +24,7 @@ traversal_test:
 logic_test:
 	$(CC) $(CFLAGS) "test/logic_test.c" "src/logic.c" "src/grid.c" "src/grid_traversal.c" -o "bin/logic_test";
 	./bin/logic_test;
+
+porcelain_test:
+	$(CC) $(CFLAGS) "test/porcelain_test.c" "src/porcelain.c" -o "bin/porcelain_test";
+	./bin/porcelain_test;

@@ -62,6 +62,8 @@ void set_valid_values(cell** target_cell, cell** grid_start){
 		if(cell_value){
 			(*target_cell)->valid_values[(cell_value - 1)] = 0;
 		}
+
+		++area_ptr;
 	}
 
 }
