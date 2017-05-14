@@ -24,6 +24,6 @@ Tests run: 3
 gcc -g "test/logic_test.c" "src/logic.c" "src/grid.c" "src/grid_traversal.c" -o "bin/logic_test";
 ./bin/logic_test;
 Tests run: 6
-gcc -g "test/porcelain_test.c" "src/porcelain.c" -o "bin/porcelain_test";
-./bin/porcelain_test;
-We're A okay!
+gcc -g "test/hash_table_test.c" "src/hash_table.c" -o "bin/hash_table_test"
+./bin/hash_table_test
+Tests run: 2
