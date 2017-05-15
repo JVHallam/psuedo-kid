@@ -48,17 +48,39 @@ cell*** new_table_array(int table_size){
 	return current_table;
 }
 
-grid_table* new_grid_table(){
-	int default_table_size = 100;
+grid_table* new_grid_table(int table_size){
 	grid_table* current_table = malloc(sizeof(grid_table));
 
-	current_table->grid_array = new_table_array(default_table_size);
+	current_table->grid_array = new_table_array(table_size);
 
-	current_table->table_size = default_table_size;
+	current_table->table_size = table_size;
 
 	current_table->keys = new_key_list();
 
 	return current_table;
+}
+
+void free_key_list(key_list* to_free){
+
+	key_node* node_ptr = to_free->head;
+	while(node_ptr){
+		key_node* next_node = node_ptr->next;
+		free(node_ptr);
+		node_ptr = next_node;
+	}
+
+	free(to_free);
+}
+
+void free_grid_table(grid_table* to_free){
+	//Free the key list and each individual node
+	free_key_list(to_free->keys);
+
+	//Free the grid array
+	free(to_free->grid_array);
+
+	//free the table itself
+	free(to_free);
 }
 
 void append_list(const char* key, key_list* current_list){
