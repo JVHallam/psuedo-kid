@@ -29,5 +29,5 @@ logic_test:
 
 
 hash_table_test:
-	$(CC) $(CFLAGS) "test/hash_table_test.c" "src/hash_table.c" -o "bin/hash_table_test"
+	$(CC) $(CFLAGS) "test/hash_table_test.c" "src/hash_table.c" "src/grid.c" -o "bin/hash_table_test"
 	./bin/hash_table_test

@@ -1,0 +1,66 @@
+The hash table:
+
+the table will contain:
+	A list of keys
+
+	it's size
+
+	it's number of entries so far (e.g. the length of the key list)
+
+	the value array
+
+the key_list:
+	contains:
+		a head node
+		a tail node
+
+The key_nodes:
+	contains:
+		pointer to next next
+		it's key value
+
+it's size:
+	is just an int, this will stay as a default value, due to the fact that i'm using linear probing as opposed to chaining.
+
+it's value array:
+	is an array of value_nodes
+
+	value_node:
+		key
+
+		grid
+
+		next (value_node*)
+
+collisions will be handled through linear probing
+
+We will need the functions:
+	new_hash_table
+
+	BOOL add_to_table(key, cell**)
+
+	cell** get_from_table(key);
+
+	free_table(hash_table*);
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+to do:
+	create the structs:
+		key_list
+
+		key_node
+
+		hash_table
+
+		value_node
+
+	functions:
+		new_table
+
+		add_to_table
+
+		get_from_table
+
+		free_table
