@@ -38,12 +38,14 @@ cell** new_grid(){
 }
 
 void free_grid(cell** grid_start){
-	for(cell** grid_ptr = grid_start; grid_ptr < (grid_start + 81); ++grid_ptr){
-		//Free each cell
-		free(*grid_ptr);
-		*grid_ptr = 0;
+	if(grid_start != 0){
+		for(cell** grid_ptr = grid_start; grid_ptr < (grid_start + 81); ++grid_ptr){
+			//Free each cell
+			free(*grid_ptr);
+			*grid_ptr = 0;
+		}
+		free(grid_start);
 	}
-	free(grid_start);
 }
 
 cell** parse_file_to_grid(char* file_name){
