@@ -26,17 +26,19 @@ typedef struct hash_table{
 	key_list* keys;
  }grid_table;
 
-//Returns TRUE if the puzzle was added to the table
-BOOL new_puzzle(const char* file_name);
-
 key_node* new_key_node(const char* key);
 
 //returns a key_list* that has head and tail set to zero.
 key_list* new_key_list();
 
+//Initialise a cell** array of size table_size with all pointers nulled.
+//Calls to malloc
 cell*** new_table_array(int table_size);
 
-grid_table* new_grid_table();
+grid_table* new_grid_table(int table_size);
+
+//Free the tables elements and then the table.
+void free_grid_table(grid_table* to_free);
 
 void append_list(const char* key, key_list* current_list);
 
