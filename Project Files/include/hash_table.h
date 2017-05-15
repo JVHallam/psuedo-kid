@@ -3,6 +3,7 @@
 
 #include "../include/grid.h"
 #include "../include/constants.h"
+#include <stdint.h>
 
 #define DEFAULT_ARRAY_SIZE 101
 
@@ -40,6 +41,9 @@ typedef struct g_table{
 //Create a new table, defaulting it's size
 grid_table* new_grid_table();
 
+//Frees all values.
+void free_table(grid_table* to_free);
+
 //adds a new grid to the table, stores it's key and returns TRUE/FALSE based on whether or not
 //it was added.
 BOOL add_to_table(const char* key, cell** grid_to_add, grid_table* target_table);
@@ -47,7 +51,8 @@ BOOL add_to_table(const char* key, cell** grid_to_add, grid_table* target_table)
 //returns a cell** from the table, based on the key.
 cell** get_from_table(const char* key, grid_table* target_table);
 
-//Frees all values.
-void free_table(grid_table* to_free);
+//That hashing algorithm i found online somewhere.
+uint32_t FNV32(const char *s);
+
 
 #endif

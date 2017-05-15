@@ -4,14 +4,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 /*
 	Notes - Tests left to write:
 		The table:
 			We can use it:
 				> Collision handling is occuring when needed
+			
 
-			We can free it:
-				> call free on it
 */
 
 int tests_run = 0;
@@ -79,11 +79,11 @@ static char* test_table_storage(){
 	//> The key list is storing the values
 	//The key list should be empty before hand. so head and tail should point to it.
 
-	mu_assert("The key isn't being stored.", test_table->keys->head != 0);
+	mu_assert("The key isn't being stored.", (test_table->keys->head) != 0);
 
 	mu_assert(\
 		"The key isn't being stored correctly!",\
-		strcmp(test_table->keys->head->key, test_key)
+		(strcmp(test_table->keys->head->key, test_key) == 0)
 	);
 
 	mu_assert(\
@@ -105,7 +105,7 @@ static char* test_table_storage(){
 			//(*value_ptr)->key is the same as test key.
 			mu_assert(\
 				"The stored key and the test key are different.",\
-				strcmp((*value_ptr)->key, test_key)
+				(strcmp((*value_ptr)->key, test_key) == 0)
 			);
 
 			//check that (*value_ptr)->grid == second_level;
