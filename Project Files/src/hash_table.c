@@ -116,8 +116,11 @@ void free_value_node_chain(value_node* to_free){
 	value_node* next_in_line = to_free->next;
 
 	while(current){
-		free_grid(current->grid);
+		if(current->grid){
+			free_grid(current->grid);
+		}
 		free(current);
+
 		current = next_in_line;
 	}
 }
@@ -127,6 +130,7 @@ void free_value_array(value_node** to_free){
 		Cycle along the array
 		If there's a node that's not null, free it.	
 	*/
+
 	for(\
 		value_node** array_ptr = to_free;\
 		array_ptr < (to_free + DEFAULT_ARRAY_SIZE);\
@@ -197,5 +201,17 @@ BOOL add_to_table(const char* key, cell** grid_to_add, grid_table* target_table)
 }
 
 cell** get_from_table(const char* key, grid_table* target_table){
-	return 0;
+	uint32_t keys_hash = FNV32(key);
+	int index = keys_hash % target_table->size;
+
+	value_node* destination = *((target_table->value_array) + index);
+
+	cell** desired_value = 0;
+
+	if(destination){
+		desired_value = destination->grid;
+	}
+	//else, it's just null.
+
+	return desired_value;
 }

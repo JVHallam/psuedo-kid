@@ -120,6 +120,8 @@ static char* test_table_storage(){
 
 	//cell** get_from_table(const char* key, grid_table* target_table);
 	//> we can get the values out when needed
+
+	
 	cell** value_from_table = get_from_table(test_key, test_table);
 
 	mu_assert("Value gotten from table is null.", value_from_table != 0);
@@ -128,7 +130,7 @@ static char* test_table_storage(){
 		"Value from table is not the value stored.",\
 		value_from_table == second_level
 	);
-
+	
 	free_table(test_table);
 	return 0;
 }
