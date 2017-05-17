@@ -32,6 +32,8 @@ void free_grid(cell** grid_start){
 			//Free each cell
 			free(*grid_ptr);
 			*grid_ptr = 0;
+
+			printf("Cell value:%i\n", (*grid_ptr)->value);
 		}
 		free(grid_start);
 	}
