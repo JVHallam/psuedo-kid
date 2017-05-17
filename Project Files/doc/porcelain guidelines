@@ -1,0 +1,6 @@
+The program should work as follows:
+    Algorithms -> Porcelain abstraction layer -> the plumbing functions (grid.h, traversal.h, logic.h)
+
+This way, when i'm dabbling with algorithms, the algorithms have zero access to the table directly. No more manual pointer manipulation.
+
+When a value is changed, porcelain will be updating our tables values automatically.

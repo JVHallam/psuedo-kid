@@ -42,9 +42,7 @@ void free_grid(cell** grid_start){
 		for(cell** grid_ptr = grid_start; grid_ptr < (grid_start + 81); ++grid_ptr){
 			//Free each cell
 			free(*grid_ptr);
-			*grid_ptr = 0;
-
-			printf("Cell value:%i\n", (*grid_ptr)->value);
+			*grid_ptr = 0;			
 		}
 		free(grid_start);
 	}

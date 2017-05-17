@@ -65,13 +65,11 @@ static char* test_new_table(){
 
 //BOOL add_to_table(const char* key, cell** grid_to_add, grid_table* target_table);
 static char* test_table_storage(){
-	cell* first_level = new_cell();
-	cell** second_level = &first_level;
+
+	cell** second_level = parse_file_to_grid("test/resources/valid1.puzzle");
+
 	grid_table* test_table = new_grid_table();
 	const char* test_key = "my key";
-
-	first_level->value = 10;
-	first_level->occupied = 1;
 
 	//Add the value to the table.
 	add_to_table(test_key, second_level, test_table);
@@ -132,6 +130,25 @@ static char* test_table_storage(){
 	);
 	
 	free_table(test_table);
+	return 0;
+}
+
+static char* test_multiple_grid_storage(){
+	/*
+		We need to make sure that we can store and use multiple grids at once.
+
+		Then free the board.
+	*/
+	return 0;
+}
+
+static char* test test_collision_handling(){
+	/*
+		Force a collision. Maybe by setting the tables size to 1?
+
+		Make sure it handles it correctly.
+	*/
+
 	return 0;
 }
 
