@@ -16,6 +16,12 @@
 
 int tests_run = 0;
 
+static char* test_new_table();
+
+static char* test_table_storage();
+
+static char* test_multiple_grid_storage();
+
 static char* run_all_tests();
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -136,18 +142,174 @@ static char* test_table_storage(){
 static char* test_multiple_grid_storage(){
 	/*
 		We need to make sure that we can store and use multiple grids at once.
-
 		Then free the board.
+
+		Create 4 different grids.
+		Store them.
+		call them.
 	*/
+
+	grid_table* grid_holder = new_grid_table();
+
+	//cell** parse_file_to_grid(char* file_name);
+	char* key_list[] = {
+		"test/resources/valid1.puzzle",
+		"test/resources/valid2.puzzle",
+		"test/resources/is_present_chamber_test.puzzle",
+		"test/resources/only_zeroes.puzzle"
+	};
+
+	cell** test_puzzles[] = {
+		parse_file_to_grid(key_list[0]),
+		parse_file_to_grid(key_list[1]),
+		parse_file_to_grid(key_list[2]),
+		parse_file_to_grid(key_list[3])
+	};
+
+	for(int i = 0; i < 4; ++i){
+		add_to_table(key_list[i], test_puzzles[i], grid_holder);
+	}
+
+	//Then retrieve each puzzle and compare them to their stored counterparts.
+
+	for(int i = 0; i < 4; ++i){
+		//Get the grid from the table.
+		//cell** get_from_table(const char* key, grid_table* target_table);
+		cell** retrieved_grid = get_from_table(key_list[i], grid_holder);
+		mu_assert("Retrieved grid isn't correct.", *retrieved_grid == *(test_puzzles[i]) );
+
+		cell** retrieved_ptr = retrieved_grid;
+		cell** actual_grid = test_puzzles[i];
+		//Fun little test where we compare the 2 grids.
+		for(int i = 0; i < 81; ++i){
+			mu_assert(\
+				"The stored and retrieved grids have differing cells.",\
+				*(retrieved_ptr++) == *(actual_grid++)
+			);
+		}
+	}
+
+	//Let's just double check that we only have 4 grids in our table.
+	//value_node** value_array
+	int grid_count = 0;
+	for(\
+		value_node** array_ptr = grid_holder->value_array;\
+		array_ptr < (grid_holder->value_array + grid_holder->size);
+		++array_ptr
+	){
+		if(*array_ptr){
+			++grid_count;
+			//Check that it's one of our values
+			BOOL is_puzzle_in_test_list = FALSE;
+			for(\
+				cell*** test_puzzles_ptr = test_puzzles;\
+				test_puzzles_ptr < &(test_puzzles[4]);
+				++test_puzzles_ptr
+			){
+				if( (*array_ptr)->grid == *test_puzzles_ptr ){
+					is_puzzle_in_test_list = TRUE;
+				}
+			}
+			mu_assert("Value found is not one of our test puzzles", is_puzzle_in_test_list);
+		}
+	};
+	mu_assert("There are more than 4 grids in the table.", grid_count == 4);
+	
+	/*
+		Make a change to one of our test puzzles and double check that that is also happening
+		inside the one in the table. Just for kicks.
+	*/
+
+	cell** changes_test = test_puzzles[0];
+	(*changes_test)->value = 100;
+	cell** grid_from_table = get_from_table(key_list[0], grid_holder);
+	mu_assert(\
+		"The changed value isn't being reflected in the stored table.",\
+		(*grid_from_table)->value == 100
+	);
+
+	/*
+		Double check that the change didn't happen to any of the other puzzles.
+	*/
+	for(int i = 1; i <= 3; ++i){
+		cell** actual_puzzle = test_puzzles[i];
+		cell** new_check = get_from_table(key_list[i], grid_holder);
+		
+		mu_assert(\
+			"Actual puzzle's value was changed to 100 when it shouldn't have",\
+			(*actual_puzzle)->value != 100
+		);
+
+		mu_assert(\
+			"Puzzle from the table's value was changed to 100 when it shouldn't have",\
+			(*new_check)->value != 100
+		);
+	}
+
+	free_table(grid_holder);
 	return 0;
 }
 
-static char* test test_collision_handling(){
+static char* test_collision_handling(){
 	/*
-		Force a collision. Maybe by setting the tables size to 1?
-
+		Force a collision by setting the table size to 1
 		Make sure it handles it correctly.
 	*/
+	//uint32_t FNV32(const char *s)
+
+	/*
+		Set table size to 1.
+
+		Store 3 values in the table
+
+		Recall all 3, again, without issues.
+	*/
+	grid_table* grid_holder = new_grid_table();
+
+	grid_holder->size = 1;
+
+	char* key_list[] = {
+		"test/resources/valid1.puzzle",
+		"test/resources/valid2.puzzle",
+		"test/resources/is_present_chamber_test.puzzle",
+		"test/resources/only_zeroes.puzzle"
+	};
+
+	cell** test_puzzles[] = {
+		parse_file_to_grid(key_list[0]),
+		parse_file_to_grid(key_list[1]),
+		parse_file_to_grid(key_list[2]),
+		parse_file_to_grid(key_list[3])
+	};
+
+	//It will crash here if there is no code to handle collisions.
+	for(int i = 0; i < 4; ++i){
+		add_to_table(key_list[i], test_puzzles[i], grid_holder);
+
+		//First value in the table:
+		const char* first_value = (*(grid_holder->value_array))->key;
+		printf("First Values key: %s\n", first_value);
+	}
+
+	for(int i = 0; i < 4; ++i){
+		cell** retrieved_from_table = get_from_table(key_list[i], grid_holder);
+
+		mu_assert(\
+			"Retrieved value doesn't match stored value",\
+			retrieved_from_table == test_puzzles[i]
+		);
+	}
+
+	free_table(grid_holder);
+	return 0;
+}
+
+static char* test_key_handling(){
+
+	return 0;
+}
+
+static char* test_duplicate_key_handling(){
 
 	return 0;
 }
@@ -156,6 +318,9 @@ static char* run_all_tests(){
 
 	mu_run_test(test_new_table);
 	mu_run_test(test_table_storage);
+	mu_run_test(test_multiple_grid_storage);
+	mu_run_test(test_collision_handling);
+	//mu_run_test(test_key_handling);
 
 	return 0;
 }
