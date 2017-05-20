@@ -113,17 +113,19 @@ void free_key_list(key_list* to_free){
 void free_value_node_chain(value_node* to_free){
 	//Free the cell** grid, then free it itself and move on.
 	value_node* current = to_free;
-	value_node* next_in_line = to_free->next;
 
+	//If there's a value at current.
 	while(current){
+		value_node* next_in_line = current->next;
+
 		if(current->grid){
 			free_grid(current->grid);
 		}
 		free(current);
-
 		current = next_in_line;
 	}
 }
+
 
 void free_value_array(value_node** to_free){
 	/*
@@ -169,7 +171,7 @@ void append_key_list(key_list* target_list, const char* key){
 }
 
 BOOL add_to_table(const char* key, cell** grid_to_add, grid_table* target_table){
-	
+
 	value_node* newest_value_node = new_value_node();
 	newest_value_node->key = key;
 	newest_value_node->grid = grid_to_add;
@@ -177,26 +179,25 @@ BOOL add_to_table(const char* key, cell** grid_to_add, grid_table* target_table)
 	append_key_list(target_table->keys, key);
 
 	uint32_t hash_value = FNV32(key);
-	int index = hash_value % target_table->size;
+	int index = hash_value % (target_table->size);
 
 	//Go to the given index:
 	value_node** destination = (target_table->value_array + index);
 
+	//If there's a collision, resolve it.
 	if(*destination){
-		value_node* next_node = (*destination)->next;
+		value_node* head = *destination;
 
-		//If next is null, set current_node->next to be newest node.
-		while(*destination){
-			(*destination) = next_node;
-			next_node = next_node->next;
+		value_node* walker = head;
+		while(walker->next){
+			walker = walker->next;
 		}
-	}
-	/*
-		This use to be while(next_node) and then i had 2 different casees
-		for what to assign to. Either (*destination)->next or *destination
-	*/
-	*destination = newest_value_node;
 
+		walker->next = newest_value_node;
+	}
+	else{
+		*destination = newest_value_node;
+	}
 	return TRUE;
 }
 
@@ -204,14 +205,24 @@ cell** get_from_table(const char* key, grid_table* target_table){
 	uint32_t keys_hash = FNV32(key);
 	int index = keys_hash % target_table->size;
 
-	value_node* destination = *((target_table->value_array) + index);
+	value_node** destination = (target_table->value_array) + index;
 
 	cell** desired_value = 0;
 
-	if(destination){
-		desired_value = destination->grid;
+	if(*destination){
+		value_node* head = *destination;
+		value_node* walker = head;
+
+		//While the keys don't match && there's another value in the chain.
+		while( (strcmp(walker->key, key) != 0) && walker->next){
+			walker = walker->next;
+		}
+
+		//Check the keys.
+		if(strcmp(walker->key, key) == 0){
+			desired_value = walker->grid;
+		}
 	}
 	//else, it's just null.
-
 	return desired_value;
 }
