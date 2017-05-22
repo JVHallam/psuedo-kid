@@ -170,35 +170,67 @@ void append_key_list(key_list* target_list, const char* key){
 	target_list->tail = new_key;
 }
 
-BOOL add_to_table(const char* key, cell** grid_to_add, grid_table* target_table){
+BOOL is_key_present(grid_table* target_table, const char* key){
+	//Trawl list to see if the key is present
+	key_node* walker = target_table->keys->head;
 
-	value_node* newest_value_node = new_value_node();
-	newest_value_node->key = key;
-	newest_value_node->grid = grid_to_add;
+	BOOL is_value_present = FALSE;
 
-	append_key_list(target_table->keys, key);
-
-	uint32_t hash_value = FNV32(key);
-	int index = hash_value % (target_table->size);
-
-	//Go to the given index:
-	value_node** destination = (target_table->value_array + index);
-
-	//If there's a collision, resolve it.
-	if(*destination){
-		value_node* head = *destination;
-
-		value_node* walker = head;
-		while(walker->next){
-			walker = walker->next;
+	while(walker){
+		if( strcmp(walker->key, key) == 0){
+			is_value_present = TRUE;
+			break;
 		}
+		walker = walker->next;
+	}
 
-		walker->next = newest_value_node;
+	return is_value_present;
+}
+
+//Returns true if added to table, else, returns false.
+BOOL add_to_table(const char* key, cell** grid_to_add, grid_table* target_table){
+	/*
+		Trawling through the key_list is an extremely slow way to validate
+		if a key is already in use on the table. But it's the best approach i 
+		currently have. Other than hashing the key, going to the location and seeing
+		if key is already present.
+	*/
+
+	if(!is_key_present(target_table, key)){
+		value_node* newest_value_node = new_value_node();
+		newest_value_node->key = key;
+		newest_value_node->grid = grid_to_add;
+
+		append_key_list(target_table->keys, key);
+
+		uint32_t hash_value = FNV32(key);
+		int index = hash_value % (target_table->size);
+
+		//Go to the given index:
+		value_node** destination = (target_table->value_array + index);
+
+		//If there's a collision, resolve it.
+		if(*destination){
+			value_node* head = *destination;
+
+			value_node* walker = head;
+			while(walker->next){
+				walker = walker->next;
+			}
+
+			walker->next = newest_value_node;
+		}
+		else{
+			*destination = newest_value_node;
+		}
+		return TRUE;
 	}
 	else{
-		*destination = newest_value_node;
+		//Key is already present.
+		return FALSE;
 	}
-	return TRUE;
+
+
 }
 
 cell** get_from_table(const char* key, grid_table* target_table){

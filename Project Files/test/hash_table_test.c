@@ -288,8 +288,17 @@ static char* test_collision_handling(){
 
 		//First value in the table:
 		const char* first_value = (*(grid_holder->value_array))->key;
-		printf("First Values key: %s\n", first_value);
+
+		mu_assert(\
+			"The first value in the chain has been changed, when it should remain the same.",\
+			(strcmp((*(grid_holder->value_array))->key, key_list[0]) == 0)
+		);
 	}
+
+	/*
+		go to the grid
+		check the first node's key is what it should be.
+	*/
 
 	for(int i = 0; i < 4; ++i){
 		cell** retrieved_from_table = get_from_table(key_list[i], grid_holder);
@@ -304,12 +313,188 @@ static char* test_collision_handling(){
 	return 0;
 }
 
-static char* test_key_handling(){
+static char* test_duplicate_key_handling(){
+	grid_table* grid_holder = new_grid_table();
+
+	char* key_list[] = {
+		"test/resources/valid1.puzzle",
+		"test/resources/valid2.puzzle",
+		"test/resources/is_present_chamber_test.puzzle",
+		"test/resources/only_zeroes.puzzle"
+	};
+
+	cell** test_puzzles[] = {
+		parse_file_to_grid(key_list[0]),
+		parse_file_to_grid(key_list[1]),
+		parse_file_to_grid(key_list[2]),
+		parse_file_to_grid(key_list[3])
+	};
+
+	//It will crash here if there is no code to handle collisions.
+	for(int i = 0; i < 4; ++i){
+		add_to_table(key_list[i], test_puzzles[i], grid_holder);
+	}
+
+	//Try to add duplicates into the table:
+	for(int j = 0; j < 2; ++j){
+		for(int i = 0; i < 4; ++i){
+			BOOL is_added = add_to_table(key_list[i], test_puzzles[i], grid_holder);
+			mu_assert(\
+				"It shouldn't be allowing duplicates to be added.",\
+				is_added == FALSE
+			);
+		}
+	}
+	
+	//Now count the keys:
+	int key_count = 0;
+	key_node* walker = grid_holder->keys->head;
+
+	while(walker) {
+		++key_count;
+		walker = walker->next;
+	}
+
+	mu_assert(\
+		"Key count isn't 4, as expected.",\
+		key_count == 4
+	);
+
+	//Check for duplicate keys.
+
+	key_node* primary_walker = grid_holder->keys->head;
+
+	while(primary_walker){
+		key_node* secondary_walker = primary_walker->next;
+		
+		while(secondary_walker){
+			BOOL are_keys_the_same = (strcmp(primary_walker->key, secondary_walker->key) == 0);
+
+			mu_assert(\
+				"Duplicate keys found in the key list",\
+				are_keys_the_same == FALSE
+			);
+
+			secondary_walker = secondary_walker->next;
+		}
+
+		primary_walker = primary_walker->next;
+	}
+
+	//Finally, check that there are only 4 puzzles on the value_array
+	int puzzle_counter = 0;
+	value_node** array_walker = grid_holder->value_array;
+
+	for(int i = 0; i < grid_holder->size; ++i){
+		//If we find a puzzle.
+		if(*array_walker){
+			value_node* chain_walker = *array_walker;
+			while(chain_walker){
+				++puzzle_counter;
+				chain_walker = chain_walker->next;
+			}
+		}
+		++array_walker;
+	}
+	
+	mu_assert(\
+		"The correct number of puzzles weren't found to be stored in the grid.",\
+		puzzle_counter == 4
+	);
 
 	return 0;
 }
 
-static char* test_duplicate_key_handling(){
+
+
+static char* test_key_handling(){
+	/*
+		Add all puzzles to the table
+
+		Check that there's only 4 keys.
+
+		Check that only the keys we've given it are there.
+
+		Check that all of our keys are there.
+	*/
+	grid_table* grid_holder = new_grid_table();
+
+	char* key_list[] = {
+		"test/resources/valid1.puzzle",
+		"test/resources/valid2.puzzle",
+		"test/resources/is_present_chamber_test.puzzle",
+		"test/resources/only_zeroes.puzzle"
+	};
+
+	cell** test_puzzles[] = {
+		parse_file_to_grid(key_list[0]),
+		parse_file_to_grid(key_list[1]),
+		parse_file_to_grid(key_list[2]),
+		parse_file_to_grid(key_list[3])
+	};
+
+	for(int i = 0; i < 4; ++i){
+		BOOL is_added = add_to_table(key_list[i], test_puzzles[i], grid_holder);
+		mu_assert(\
+			"Valid key-value pair hasn't been added",
+			is_added == TRUE
+		);
+	}
+
+	//Check all of our test values have been added.
+	int key_counter = 0;
+	key_node* key_walker = grid_holder->keys->head;
+	while(key_walker){
+		++key_counter;
+		key_walker = key_walker->next;
+	}
+
+	mu_assert(\
+		"Incorrect number of keys found",\
+		key_counter == 4
+	);
+
+	//Double check that all of the values in our array are in our list
+	for(int i = 0; i < 4; ++i){
+		char* current_key = key_list[i];
+
+		BOOL is_current_key_present = FALSE;
+
+		key_walker = grid_holder->keys->head;
+		while(key_walker){
+			if(strcmp(current_key, key_walker->key) == 0){
+				is_current_key_present = TRUE;
+				break;
+			}
+			key_walker = key_walker->next;
+		}
+		mu_assert(\
+			"Key that should have been added was not found.",\
+			is_current_key_present == TRUE
+		);
+	}
+
+	//Double check that the list only contains keys that are in our array.
+	key_walker = grid_holder->keys->head;
+
+	while(key_walker){
+		//For each key, check it's in there.
+		BOOL is_key_in_array = FALSE;
+
+		for(int i = 0; i < 4; ++i){
+			if(strcmp(key_list[i], key_walker->key) == 0){
+				is_key_in_array = TRUE;
+				break;
+			}
+		}
+
+		mu_assert(\
+			"Key in the key list was not found in the array.",\
+			is_key_in_array == TRUE
+		);
+
+		key_walker = key_walker->next;
+	}
 
 	return 0;
 }
@@ -320,7 +505,8 @@ static char* run_all_tests(){
 	mu_run_test(test_table_storage);
 	mu_run_test(test_multiple_grid_storage);
 	mu_run_test(test_collision_handling);
-	//mu_run_test(test_key_handling);
+	mu_run_test(test_duplicate_key_handling);
+	mu_run_test(test_key_handling);
 
 	return 0;
 }
