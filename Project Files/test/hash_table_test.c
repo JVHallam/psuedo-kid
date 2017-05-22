@@ -24,6 +24,20 @@ static char* test_multiple_grid_storage();
 
 static char* run_all_tests();
 
+char* test_keys_array[] = {
+	"test/resources/valid1.puzzle",
+	"test/resources/valid2.puzzle",
+	"test/resources/is_present_chamber_test.puzzle",
+	"test/resources/only_zeroes.puzzle"
+};
+
+cell** test_puzzles_array[4] = {0, 0, 0, 0};
+
+	
+const int test_list_size = 4;
+
+grid_table* initialise_grid_table();
+
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 int main(){
 	const char* result = run_all_tests();
@@ -37,6 +51,22 @@ int main(){
 }
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+void initalise_test_puzzles_array(){
+	for(int i = 0; i < 4; ++i){
+		test_puzzles_array[i] = parse_file_to_grid(test_keys_array[i]);
+	}
+}
+
+grid_table* create_table_with_test_values(){
+	grid_table* current_table = new_grid_table();
+
+	for(int i = 0; i < test_list_size; ++i){
+		add_to_table(test_keys_array[i], test_puzzles_array[i], current_table);
+	}
+
+	return current_table;
+}
 
 static char* test_new_table(){
 	grid_table* test_table = new_grid_table();
@@ -69,7 +99,7 @@ static char* test_new_table(){
 	return 0;
 }
 
-//BOOL add_to_table(const char* key, cell** grid_to_add, grid_table* target_table);
+
 static char* test_table_storage(){
 
 	cell** second_level = parse_file_to_grid("test/resources/valid1.puzzle");
@@ -500,8 +530,12 @@ static char* test_key_handling(){
 }
 
 static char* run_all_tests(){
+	initalise_test_puzzles_array();
 
+	//Testing to make sure that a new table has all of it's values nulled.
 	mu_run_test(test_new_table);
+
+	//Make sure it can store values
 	mu_run_test(test_table_storage);
 	mu_run_test(test_multiple_grid_storage);
 	mu_run_test(test_collision_handling);

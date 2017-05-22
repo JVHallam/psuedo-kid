@@ -29,3 +29,7 @@ logic_test:
 hash_table_test:
 	$(CC) $(CFLAGS) "test/hash_table_test.c" "src/hash_table.c" "src/grid.c" -o "bin/hash_table_test"
 	./bin/hash_table_test
+
+porcelain_test:
+	$(CC) $(CFLAGS) "test/porcelain_test.c" "src/porcelain.c" "src/hash_table.c" "src/grid.c" -o "bin/porcelain_test"
+	./bin/porcelain_test
