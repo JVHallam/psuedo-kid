@@ -2,3 +2,4 @@ grid_test
 traversal_test
 logic_test
 hash_table_test
+porcelain_test
