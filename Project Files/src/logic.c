@@ -36,34 +36,40 @@ BOOL is_present(cell*** test_area, int value){
 	return FALSE;
 }
 
-void set_valid_values(cell** target_cell, cell** grid_start){
-	/*
-		Ok, so:	
-			We need to get every value that's in the same {row, column, chamber} as target cell.
-			We then need to adjust valid_values to reflect this.
-	*/
+void set_valid_values_using_area(cell** target_cell, cell*** area_ptr){
+	for(int index = 0; index < 9; ++index){
+		int cell_value = (**area_ptr)->value;
+		if(cell_value){
+			(*target_cell)->valid_values[(cell_value - 1)] = FALSE;
+		}
+		++area_ptr;
+	}
+}
 
+void set_all_cells_valid_values(cell** target_cell, cell** grid_start){
 	//Get the row, cell and chamber index;
 	int row_index = get_cells_row_index(target_cell, grid_start);
 	int column_index = get_cells_column_index(target_cell, grid_start);
 	int chamber_index = get_cells_chamber_index(target_cell, grid_start);
 
+	//Get the areas.
 	cell*** cells_row = get_row(row_index, grid_start);
 	cell*** cells_column = get_column(column_index, grid_start);
 	cell*** cells_chamber = get_chamber(chamber_index, grid_start);
 
-	//Now that we have the rows, we must cycle through them and find the values involved.
-	//Making sure to flick the value in valid_values to false.
+	//Now we have the areas, we must set the valid values up.
+	set_valid_values_using_area(target_cell, cells_row);
+	set_valid_values_using_area(target_cell, cells_column);
+	set_valid_values_using_area(target_cell, cells_chamber);
 
-	cell*** area_ptr = cells_row;
-	for(int index = 0; index < 9; ++index){
-		int cell_value = (**area_ptr)->value;
+	//Free the Areas.
+	free(cells_row);
+	free(cells_column);
+	free(cells_chamber);
+}
 
-		if(cell_value){
-			(*target_cell)->valid_values[(cell_value - 1)] = 0;
-		}
-
-		++area_ptr;
+void set_all_valid_values(cell** target_grid){
+	for(cell** target_cell = target_grid; target_cell < (target_grid + 81); ++target_cell){
+		set_all_cells_valid_values(target_cell, target_grid);
 	}
-
 }

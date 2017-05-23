@@ -20,7 +20,7 @@ BOOL is_present(cell*** given_area, int value);
 
 //Point this at a cell and then update it's valid_values bool array based on the surrounding
 //area
-void set_valid_values(cell** target_cell, cell** grid_start);
+void set_all_valid_values(cell** grid_start);
 
 //Takes a cell that has just had it's value changed. It then updates the row, column and chamber
 //That this cell is in and updates the valid_values list for all cells in these areas.

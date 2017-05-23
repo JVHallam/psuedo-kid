@@ -1,6 +1,8 @@
 #ifndef GRID_TRAVERSAL_H_
 #define GRID_TRAVERSAL_H_
 
+#include <stdlib.h>
+
 //So this is the file used to traverse the grids given by grid.h
 //It should return an array to the areas needed.
 //Traverse to chamber, row, column.
