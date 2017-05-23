@@ -176,7 +176,7 @@ static char* test_is_present(){
 	return 0;
 }
 
-static char* test_set_valid_values(){
+static char* test_set_all_valid_values(){
 	/*
 		puzzles to test this with:
 			only_zeroes.puzzle:
@@ -198,12 +198,23 @@ static char* test_set_valid_values(){
 
 	cell** only_zeroes = parse_file_to_grid("test/resources/only_zeroes.puzzle");
 	if(only_zeroes){
-		/*
-			Cycle through the entire grid:
-				Set valid values on each cell
 
-				Check that all valid values are infact set to TRUE
-		*/
+		//Being only zeroes, each cell should have valid_values[x] == TRUE
+		set_all_valid_values(only_zeroes);
+
+		for(cell** grid_ptr = only_zeroes; grid_ptr < (only_zeroes + 81); ++grid_ptr){
+			for(\
+				BOOL* valid_values_ptr = (*grid_ptr)->valid_values;\
+				valid_values_ptr < ((*grid_ptr)->valid_values) + 9;\
+				++valid_values_ptr
+			){
+				//For each valid value, it should be TRUE.
+				mu_assert(\
+					"A valid value for an all zero grid has been set to false",\
+					*valid_values_ptr == TRUE
+				);
+			}
+		}
 		free_grid(only_zeroes);
 	}
 	else{
@@ -212,12 +223,24 @@ static char* test_set_valid_values(){
 
 	cell** completed = parse_file_to_grid("test/resources/completed.puzzle");
 	if(completed){
-		/*
-			Cycle through the entire grid:
-				Set valid values on each cell
 
-				Check that the all valid values are set to FALSE
-		*/
+		set_all_valid_values(completed);
+
+		//Being completed, all valid values should be set to FALSE
+
+		for(cell** grid_ptr = completed; grid_ptr < (completed + 81); ++grid_ptr){
+			for(\
+				BOOL* valid_values_ptr = (*grid_ptr)->valid_values;\
+				valid_values_ptr < ((*grid_ptr)->valid_values) + 9;
+				++valid_values_ptr
+			){
+				mu_assert(\
+					"A valid value has been set to TRUE, even though the grid is completed",\
+					*valid_values_ptr == FALSE
+				);	
+			}
+		}
+
 		free_grid(completed);
 	}
 	else{
@@ -244,6 +267,15 @@ static char* test_set_valid_values(){
 	return 0;
 }
 
+static char* test_update_surrounding_areas(){
+	//Have a grid.
+
+
+
+
+	return 0;
+}
+
 static char* run_all_tests(){
 	test_grid = parse_file_to_grid("test/resources/valid1.puzzle");
 	if(test_grid){
@@ -252,7 +284,7 @@ static char* run_all_tests(){
 		mu_run_test(test_get_cells_column_index);
 		mu_run_test(test_get_cells_chamber_index);
 		mu_run_test(test_is_present);
-		mu_run_test(test_set_valid_values);
+		mu_run_test(test_set_all_valid_values);
 
 		free_grid(test_grid);
 		return 0;

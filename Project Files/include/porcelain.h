@@ -29,4 +29,6 @@ BOOL new_puzzle(char* file_name);
 //Cleans up the table once finished.
 void porcelain_cleanup();
 
+//Where choice is ROW, CHAMBER, COLUMN, CELL, as defined in grid.h
+BOOL set_value(int choice, int choice_index, int cell_index, char* key);
 #endif

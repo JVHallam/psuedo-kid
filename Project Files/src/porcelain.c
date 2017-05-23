@@ -24,6 +24,8 @@ BOOL new_puzzle(char* file_name){
 	grid_table* quick_test = new_grid_table();
 
 	if(current_grid){
+		//Take current_grid and set all of the valid_values for the table.
+
 		return add_to_table(file_name, current_grid, puzzle_container);
 	}
 	else{
