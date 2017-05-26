@@ -234,27 +234,34 @@ BOOL add_to_table(const char* key, cell** grid_to_add, grid_table* target_table)
 }
 
 cell** get_from_table(const char* key, grid_table* target_table){
-	uint32_t keys_hash = FNV32(key);
-	int index = keys_hash % target_table->size;
-
-	value_node** destination = (target_table->value_array) + index;
-
 	cell** desired_value = 0;
 
-	if(*destination){
-		value_node* head = *destination;
-		value_node* walker = head;
+	//Reject null keys
+	if(key){
+		uint32_t keys_hash = FNV32(key);
 
-		//While the keys don't match && there's another value in the chain.
-		while( (strcmp(walker->key, key) != 0) && walker->next){
-			walker = walker->next;
-		}
+		int index = keys_hash % target_table->size;
 
-		//Check the keys.
-		if(strcmp(walker->key, key) == 0){
-			desired_value = walker->grid;
+		value_node** destination = (target_table->value_array) + index;
+
+		
+
+		if(*destination){
+			value_node* head = *destination;
+			value_node* walker = head;
+
+			//While the keys don't match && there's another value in the chain.
+			while( (strcmp(walker->key, key) != 0) && walker->next){
+				walker = walker->next;
+			}
+
+			//Check the keys.
+			if(strcmp(walker->key, key) == 0){
+				desired_value = walker->grid;
+			}
 		}
 	}
+	
 	//else, it's just null.
 	return desired_value;
 }

@@ -37,15 +37,107 @@ static char* test_set_values_input_validation(){
 	char* test_puzzle = "test/resources/set_values_input_validation.puzzle";
 
 	if(new_puzzle(test_puzzle)){
+		const int valid_choice = ROW;
+		const int valid_choice_index = 0;
+		const int valid_cell_index = 0;
+		const int valid_value = 1;
+
+		int invalid_choice[2] = {0, 5};
+		int invalid_choice_index[2] = {-1, 9};
+		int invalid_cell_index[2] = {-1, 9};
+		int invalid_value[2] = {0, 10};
+		char* invalid_keys[2] = {
+			0,
+			"garbage"
+		};
+
+		//Valid everything first:
+		BOOL is_all_valids_valid = FALSE;
+
+		is_all_valids_valid = set_value(valid_choice, valid_choice_index, valid_cell_index, \
+										valid_value, test_puzzle);
+
+		mu_assert(\
+			"Returning false, even when all values are valid.",\
+			is_all_valids_valid == TRUE
+		);
+
 		//test that choice can't take values outside of 1 - 4
+		BOOL is_invalid_choice_allowed = TRUE;
+
+		for(int i = 0; i < 2; ++i){
+			is_invalid_choice_allowed = set_value(	invalid_choice[i], valid_choice_index, \
+													valid_cell_index, valid_value, \
+													test_puzzle);
+
+			mu_assert(\
+				"set value is allowing invalid choices",\
+				is_invalid_choice_allowed == FALSE
+			);
+		}
+
 		//test that choice_index can't take values outside of 0 - 8
+		BOOL is_invalid_choice_index_allowed = TRUE;
+
+		for(int i = 0; i < 2; ++i){
+			is_invalid_choice_index_allowed = set_value(valid_choice, \
+														invalid_choice_index[i], \
+														valid_cell_index, valid_value, \
+														test_puzzle);
+
+			mu_assert(\
+				"Invalid choice index is allowed",\
+				is_invalid_choice_index_allowed == FALSE
+			);
+		}
+
 		//test that cell_index can't take values outside of 0 -8
+		BOOL is_invalid_cell_index_allowed = TRUE;
+
+		for(int i = 0; i < 2; ++i){
+			is_invalid_cell_index_allowed = set_value(	valid_choice, valid_choice_index,\
+														invalid_cell_index[i], valid_value, \
+														test_puzzle);
+
+			mu_assert(\
+				"Invalid cell indexes are allowed.",\
+				is_invalid_cell_index_allowed == FALSE
+			);
+		}
+
 		//test that value can't be outside of 1 - 9
+		BOOL is_invalid_value_allowed = TRUE;
+
+		for(int i = 0; i < 2; ++i){
+			is_invalid_value_allowed = set_value( 	valid_choice, valid_choice_index, \
+													valid_cell_index, invalid_value[i],\
+													test_puzzle);
+
+			mu_assert(\
+				"Invalid values are allowed",\
+				is_invalid_value_allowed == FALSE
+			);
+		}
+
 		//Test that it returns false if key isn't valid
+		BOOL is_invalid_key_allowed = TRUE;
+
+		for(int i = 0; i < 2; ++i){
+			is_invalid_key_allowed = set_value(valid_choice, valid_choice_index, \
+												valid_cell_index, valid_value, \
+												invalid_keys[i]);
+
+			mu_assert(\
+				"Invalid keys are allowed",\
+				is_invalid_key_allowed == FALSE
+			);
+		}
+
 	}
 	else{
 		return "Test puzzle couldn't be added to the puzzle list";
 	}
+
 	return 0;
 }
 
@@ -96,6 +188,8 @@ static char* test_set_value(){
 }
 
 static char* run_all_tests(){
+
+
 
 	mu_run_test(test_new_puzzle);
 	mu_run_test(test_set_values_input_validation);
