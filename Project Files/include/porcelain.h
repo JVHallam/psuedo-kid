@@ -51,4 +51,6 @@ BOOL is_value_present(int choice, int choice_index, int value, char* key);
 
 BOOL is_valid_value(int choice, int choice_index, int cell_index, int value, char* key);
 
+void print_grid(char* key);
+
 #endif
