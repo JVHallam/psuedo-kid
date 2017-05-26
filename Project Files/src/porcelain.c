@@ -138,9 +138,17 @@ BOOL set_value(int choice, int choice_index, int cell_index, int value, char* ke
 			update_surrounding_areas(target_cell, target_grid);
 
 			(*target_cell)->occupied = TRUE;
+
+			return TRUE;
 		}
 	}
 	else{
 		return FALSE;
 	}
+}
+
+void print_grid(char* key){
+	cell** target_table = get_from_table(key, puzzle_container);
+
+	print_grid_values(target_table);
 }
