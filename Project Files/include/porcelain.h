@@ -29,6 +29,26 @@ BOOL new_puzzle(char* file_name);
 //Cleans up the table once finished.
 void porcelain_cleanup();
 
-//Where choice is ROW, CHAMBER, COLUMN, CELL, as defined in grid.h
-BOOL set_value(int choice, int choice_index, int cell_index, char* key);
+
+/*
+	Have a target cell:
+		check if it can contain a value without breaking sudoku rule
+
+		if it can: set it. return TRUE
+		if it can't: return FALSE
+
+	choice_index ranges from 0 - 8
+
+	cell_index ranges from 0 - 8
+
+	Where choice is ROW, CHAMBER, COLUMN, CELL, as defined in grid.h
+*/
+BOOL set_value(int choice, int choice_index, int cell_index, int value, char* key);
+
+int get_value(int choice, int choice_index, int cell_index, char* key);
+
+BOOL is_value_present(int choice, int choice_index, int value, char* key);
+
+BOOL is_valid_value(int choice, int choice_index, int cell_index, int value, char* key);
+
 #endif
