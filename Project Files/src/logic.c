@@ -73,3 +73,41 @@ void set_all_valid_values(cell** target_grid){
 		set_all_cells_valid_values(target_cell, target_grid);
 	}
 }
+
+void update_areas_valid_values(int value, cell*** target_area){
+	for(cell*** area_ptr = target_area; area_ptr < (target_area + 9); ++area_ptr){
+		(**(area_ptr))->valid_values[value - 1] = FALSE;
+	}
+}
+
+void update_row(cell** target_cell, cell** grid_start){
+	int target_row_index = get_cells_row_index(target_cell, grid_start);
+
+	cell*** target_area = get_row(target_row_index, grid_start);
+
+	update_areas_valid_values((*target_cell)->value, target_area);
+}
+
+void update_column(cell** target_cell, cell** grid_start){
+	int target_column_index = get_cells_column_index(target_cell, grid_start);
+
+	cell*** target_area = get_column(target_column_index, grid_start);
+
+	update_areas_valid_values((*target_cell)->value ,target_area);
+}
+
+void update_chamber(cell** target_cell, cell** grid_start){
+	int target_chamber_index = get_cells_chamber_index(target_cell, grid_start);
+
+	cell*** target_area = get_chamber(target_chamber_index, grid_start);
+
+	update_areas_valid_values((*target_cell)->value, target_area);
+}
+
+void update_surrounding_areas(cell** target_cell, cell** grid_start){
+	update_row(target_cell, grid_start);
+
+	update_column(target_cell, grid_start);
+
+	update_chamber(target_cell, grid_start);
+}

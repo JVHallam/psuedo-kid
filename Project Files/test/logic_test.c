@@ -20,7 +20,7 @@ int main(){
 	char* result = run_all_tests();
 
 	if(result){
-		printf("\n\n%s\n", result);
+		printf("\n%s\n\n", result);
 	}
 
 	printf("Tests run: %i\n", tests_run);
@@ -249,15 +249,30 @@ static char* test_set_all_valid_values(){
 
 	cell** set_valid_values1 = parse_file_to_grid("test/resources/set_valid_values1.puzzle");
 	if(set_valid_values1){
-		/*
-			Cycle through the entire grid:
-				set valid values
+		set_all_valid_values(set_valid_values1);
 
-			For int each_chamber from range 0 to 8:
-				check (chamber + each_chamber)'s cell of index each_chamber
-				has valid_values[each_chamber + 1] set to FALSE
-		
-		*/
+		for(int chamber_index = 0; chamber_index < 9; ++chamber_index){
+			//cell*** get_chamber(int chamber_index, cell** grid_start);
+			cell*** current_chamber = get_chamber(chamber_index, set_valid_values1);
+
+			//For each cell, check that the above is correct.
+
+			for(\
+				cell*** area_ptr = current_chamber;\
+				area_ptr < (current_chamber + 9);
+				++area_ptr
+			){
+				BOOL target_valid_value = (**area_ptr)->valid_values[chamber_index];
+
+				mu_assert(\
+					"Target value was not set to FALSE.",\
+					target_valid_value == FALSE
+				);
+			}
+
+			free(current_chamber);
+		}
+
 		free_grid(set_valid_values1);
 	}
 	else{
@@ -267,14 +282,83 @@ static char* test_set_all_valid_values(){
 	return 0;
 }
 
+
+/*
+	This test is bad:
+		It only tests for what we need
+
+		Doesn't check if it's changing things it shouldn't.
+*/
+BOOL is_cell_in_area(cell** target_cell, cell*** target_area){
+	for(cell*** area_ptr = target_area; area_ptr < (target_area + 9); ++area_ptr){
+		if(*area_ptr == target_cell){
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+
+//Only tested on a single cell, but it works. I can't be bothered to write some clever and
+//Comprehensive test that does everything that i need. Do i look like a QA tester to you?
+//No, i'm a C programmer. I program and pray it doesn't break.
 static char* test_update_surrounding_areas(){
-	//Have a grid.
+	
+	cell** zeroes_grid = parse_file_to_grid("test/resources/only_zeroes.puzzle");
 
+	int desired_value = 1;
 
+	(*zeroes_grid)->value = desired_value;
 
+	update_surrounding_areas(zeroes_grid, zeroes_grid);
+
+	cell*** test_column = get_column(0, zeroes_grid);
+	cell*** test_row = get_row(0, zeroes_grid);
+	cell*** test_chamber = get_chamber(0, zeroes_grid);
+
+	for(cell** grid_ptr = zeroes_grid; grid_ptr < (zeroes_grid + 81); ++grid_ptr){
+		int cell_index = get_cell_index(grid_ptr, zeroes_grid);
+
+		if(\
+			is_cell_in_area(grid_ptr, test_row) || \
+			is_cell_in_area(grid_ptr, test_column) || \
+			is_cell_in_area(grid_ptr, test_chamber)
+		){
+			//In the area that should be effected.
+			mu_assert(\
+				"Cells in the effected area aren't having valid_values[0] set to false",\
+				(*grid_ptr)->valid_values[0] == FALSE
+			);
+
+			for(int i = 1; i < 9; ++i){
+				mu_assert(\
+					"update_surrounding_areas is also making changes to additional slots "
+					"in the valid_values array, when it shouldn't be.",\
+					(*grid_ptr)->valid_values[i] == TRUE
+				);				
+			}
+
+		}
+		else{
+			//In the area that should NOT be effected.
+			for(int i = 0; i < 9; ++i){
+				mu_assert(\
+					"Cells in the uneffected areas are having their valid_values changed.",\
+					(*grid_ptr)->valid_values[i] == TRUE
+				);				
+			}
+
+		}
+
+	}
+	free(test_column);
+	free(test_row);
+	free(test_chamber);
 
 	return 0;
 }
+
+
 
 static char* run_all_tests(){
 	test_grid = parse_file_to_grid("test/resources/valid1.puzzle");
@@ -285,6 +369,7 @@ static char* run_all_tests(){
 		mu_run_test(test_get_cells_chamber_index);
 		mu_run_test(test_is_present);
 		mu_run_test(test_set_all_valid_values);
+		mu_run_test(test_update_surrounding_areas);
 
 		free_grid(test_grid);
 		return 0;
