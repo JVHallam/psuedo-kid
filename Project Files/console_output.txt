@@ -23,10 +23,27 @@ gcc -g "test/grid_traversal_test.c" "src/grid_traversal.c" "src/grid.c" -o "bin/
 Tests run: 3
 gcc -g "test/logic_test.c" "src/logic.c" "src/grid.c" "src/grid_traversal.c" -o "bin/logic_test";
 ./bin/logic_test;
-Tests run: 6
+Tests run: 7
 gcc -g "test/hash_table_test.c" "src/hash_table.c" "src/grid.c" -o "bin/hash_table_test"
 ./bin/hash_table_test
 tests run: 6
-gcc -g "test/porcelain_test.c" "src/porcelain.c" "src/hash_table.c" "src/grid.c" -o "bin/porcelain_test"
+gcc -g "test/porcelain_test.c" \
+"src/porcelain.c" \
+"src/hash_table.c" \
+"src/grid.c" \
+"src/logic.c" \
+"src/grid_traversal.c" \
+-o "bin/porcelain_test"
 ./bin/porcelain_test
-Tests run: 1
+
+1 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 
+
+Tests run: 3
