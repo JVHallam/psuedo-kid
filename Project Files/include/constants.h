@@ -9,7 +9,7 @@
 	#define ROW 1
 	#define COLUMN 2
 	#define CHAMBER 3
-	#define CELL 4
+	
 
 #endif
 

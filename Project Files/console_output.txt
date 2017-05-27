@@ -35,6 +35,10 @@ gcc -g "test/porcelain_test.c" \
 "src/grid_traversal.c" \
 -o "bin/porcelain_test"
 ./bin/porcelain_test
+cell_index wasn't in the range: 0 <= cell_index <= 8
+cell_index wasn't in the range: 0 <= cell_index <= 8
+No target area was recieved
+No target area was recieved
 
 1 0 0 0 0 0 0 0 0 
 0 0 0 0 0 0 0 0 0 
@@ -46,4 +50,4 @@ gcc -g "test/porcelain_test.c" \
 0 0 0 0 0 0 0 0 0 
 0 0 0 0 0 0 0 0 0 
 
-Tests run: 3
+Tests run: 5

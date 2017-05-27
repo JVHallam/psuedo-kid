@@ -187,13 +187,90 @@ static char* test_set_value(){
 	return 0;
 }
 
+/*
+BOOL set_value(int choice, int choice_index, int cell_index, int value, char* key);
+
+int get_value(int choice, int choice_index, int cell_index, char* key);
+*/
+static char* test_get_value(){
+	char* test_puzzle = "test/resources/test_get_value.puzzle";
+
+	if(new_puzzle(test_puzzle)){
+		for(int cell_index = 0; cell_index < 9; ++cell_index){
+			int value = cell_index + 1;
+
+			set_value(CHAMBER, 0, cell_index, value, test_puzzle);
+
+			int received_value = get_value(CHAMBER, 0, cell_index, test_puzzle);
+
+			if(received_value){
+				mu_assert(\
+					"Set value and recieved value are different.",\
+					value == received_value
+				);
+			}
+			else{
+				return "received_value is coming back null, after being set.";
+			}
+		}
+	}
+
+	return 0;
+}
+
+/*
+	#define ROW 1
+	#define COLUMN 2
+	#define CHAMBER 3
+*/
+static char* test_is_value_present(){
+	char* puzzle_keys[3] = {
+		"test/resources/is_present_row_test.puzzle",
+		"test/resources/is_present_column_test.puzzle",
+		"test/resources/is_present_chamber_test.puzzle"
+	};
+
+	for(int choice_type = 1; choice_type <= 3; ++choice_type){
+		int puzzle_index = choice_type - 1;
+
+		char* current_puzzle = puzzle_keys[puzzle_index];
+
+		if(new_puzzle(current_puzzle)){
+			for(int area_index = 0; area_index < 9; ++area_index){
+				for(int value = 1; value <= 9; ++value){
+					BOOL was_value_present = is_value_present(	choice_type, area_index, \
+																value, current_puzzle);
+
+					if(value == (area_index + 1)){
+						mu_assert(\
+							"Value was found to be present, even though it shouldn't",\
+							was_value_present == FALSE
+						);
+					}
+					else{
+						mu_assert(\
+							"Value was not found, even though it should be.",\
+							was_value_present == TRUE
+						);
+					}
+				}
+			}
+		}
+		else{
+			return "Valid puzzle couldn't be added to the puzzle list.";
+		}
+	}
+	return 0;
+}
+
 static char* run_all_tests(){
-
-
 
 	mu_run_test(test_new_puzzle);
 	mu_run_test(test_set_values_input_validation);
 	mu_run_test(test_set_value);
+	mu_run_test(test_get_value);
+	mu_run_test(test_is_value_present);
+
 
 	porcelain_cleanup();
 	return 0;
