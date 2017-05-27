@@ -76,7 +76,7 @@ cell** get_cell_from_table(int choice, int choice_index, int cell_index, char* k
 }
 
 //Can only set values to be 1 through 9
-BOOL is_value_valid(int value){
+BOOL is_new_value_valid(int value){
 	if(1 <= value && value <= 9){
 		return TRUE;
 	}
@@ -99,10 +99,9 @@ BOOL is_index_valid(int index){
 		#define ROW 1
 		#define COLUMN 2
 		#define CHAMBER 3
-		#define CELL 4
 */
 BOOL is_choice_valid(int choice){
-	if(1 <= choice && choice <= 4){
+	if(1 <= choice && choice <= 3){
 		return TRUE;
 	}
 	else{
@@ -118,7 +117,7 @@ BOOL set_value(int choice, int choice_index, int cell_index, int value, char* ke
 	if(\
 		is_choice_valid(choice) && \
 		is_index_valid(choice_index) && \
-		is_value_valid(value)
+		is_new_value_valid(value)
 	){
 		target_cell = get_cell_from_table(choice, choice_index, cell_index, key);	
 		if(target_cell){
@@ -147,8 +146,71 @@ BOOL set_value(int choice, int choice_index, int cell_index, int value, char* ke
 	}
 }
 
+int get_value(int choice, int choice_index, int cell_index, char* key){
+	//First off, validate the input:	
+	cell** target_cell = 0;
+	BOOL is_cell_occupied = TRUE;
+
+	if(\
+		is_choice_valid(choice) && \
+		is_index_valid(choice_index)
+	){
+		target_cell = get_cell_from_table(choice, choice_index, cell_index, key);	
+	} 
+
+	if(target_cell){
+		return (*target_cell)->value;
+	}
+	
+	return 0;
+}
+
 void print_grid(char* key){
 	cell** target_table = get_from_table(key, puzzle_container);
 
 	print_grid_values(target_table);
+}
+
+//From logic.h
+//BOOL is_present(cell*** given_area, int value);
+
+BOOL is_value_present(int choice, int choice_index, int value, char* key){
+
+	BOOL was_value_present = FALSE;
+
+	if(\
+		is_choice_valid(choice) && \
+		is_index_valid(choice_index) && \
+		is_new_value_valid(value)
+	){
+		//Next, get the area based on choice.
+		cell*** desired_area = 0;
+
+		cell** target_grid = get_from_table(key, puzzle_container);
+
+		if(target_grid){
+			switch(choice){
+				case ROW:
+					desired_area = get_row(choice_index, target_grid);
+					break;
+
+				case COLUMN:
+					desired_area = get_column(choice_index, target_grid);
+					break;
+
+				case CHAMBER:
+					desired_area = get_chamber(choice_index, target_grid);
+					break;
+			}
+			was_value_present = is_present(desired_area, value);
+		}
+		else{
+			printf("Key given to is_value_present was invalid.\n");
+		}
+	}
+	else{
+		printf("Values given to function is_value_present were incorrect.\n");
+	}
+
+	return was_value_present;
 }
