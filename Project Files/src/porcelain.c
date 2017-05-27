@@ -24,11 +24,11 @@ BOOL new_puzzle(char* file_name){
 	
 	cell** current_grid = parse_file_to_grid(file_name);
 
-	grid_table* quick_test = new_grid_table();
-
 	if(current_grid){
 		//Take current_grid and set all of the valid_values for the table.
 
+		set_all_valid_values(current_grid);
+		
 		return add_to_table(file_name, current_grid, puzzle_container);
 	}
 	else{
@@ -213,4 +213,23 @@ BOOL is_value_present(int choice, int choice_index, int value, char* key){
 	}
 
 	return was_value_present;
+}
+
+BOOL is_value_valid(int choice, int choice_index, int cell_index, int value, char* key){
+	BOOL was_value_valid = FALSE;
+
+	if(
+		is_choice_valid(choice) && \
+		is_index_valid(choice_index) && \
+		is_index_valid(cell_index) && \
+		is_new_value_valid(value)
+	){
+		cell** target_cell = get_cell_from_table(choice, choice_index, cell_index, key);
+
+		int value_index = value - 1;
+
+		was_value_valid = (*target_cell)->valid_values[value_index];
+	}
+		
+	return was_value_valid;
 }
