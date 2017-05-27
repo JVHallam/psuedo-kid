@@ -263,6 +263,94 @@ static char* test_is_value_present(){
 	return 0;
 }
 
+//This test needs finishing, see the comment at the end of the function.
+static char* test_is_value_valid(){
+
+	/*
+		Have a zero grid.
+		All values should be valid.
+
+		set cell 0 to 1.
+		cell 1 should not be allowed 1, but be allowed 2.
+
+		cell 2 should not be allowed < 2, but be allowed 3.
+
+		cell 3 should not be allowed valued < 3, but be allowed 4.
+
+		cell n should not be allowed values < n, but be allowed n + 1.
+	*/
+
+	//All of these are zero grids.
+	char* puzzle_keys[3] = {
+		"test/resources/test_is_value_valid_rows.puzzle",
+		"test/resources/test_is_value_valid_columns.puzzle",
+		"test/resources/test_is_value_valid_chambers.puzzle"
+	};
+
+	for(int puzzle_index = 0; puzzle_index < 3; ++puzzle_index){
+		char* puzzle_key = puzzle_keys[puzzle_index];
+
+		if(new_puzzle(puzzle_key)){
+			int area_index = 0;
+			int choice = puzzle_index + 1;
+			/*
+				For each cell in the area:
+					Check that the cell can't hold any number below
+					It's (index + 1). E.g.:
+						cell of index 6 (the 7th cell in the row) can't hold 1 - 6.
+						But it can hold 7. So set it's value to 7.
+
+					Then finally, set it's value to it's index + 1.
+			*/
+			for(int cell_index = 0; cell_index < 9; ++cell_index){
+				BOOL was_value_valid = FALSE;
+
+				for(int value = 0; value <= cell_index; ++value){
+					//We're checking that the current cell can't hold any of the previous
+					//Values.
+					was_value_valid = is_value_valid(	choice, area_index, cell_index, \
+														value, puzzle_key);
+
+					mu_assert(\
+						"Value was found to be valid, when it should not be.",\
+						was_value_valid == FALSE
+					);
+				}
+
+				//Check that the cell CAN hold cell_index + 1;
+				int new_value = cell_index + 1;
+				was_value_valid = is_value_valid(	choice, area_index, cell_index, \
+													new_value, puzzle_key);
+
+				mu_assert(\
+					"is_value_valid is returning false, when the value"\
+					"isn't already in the area.",\
+					was_value_valid == TRUE
+				);
+
+				BOOL was_value_set = set_value(	choice, area_index, cell_index,\
+												new_value, puzzle_key);
+
+				mu_assert(\
+					"New value wasn't set, even though it was a valid value.",\
+					was_value_set == TRUE
+				);
+
+				/*
+					Finally, check that all other cells in the other areas (if row, 
+					check the columns and chambers cells) have had their valid values for
+					the new_value, set to FALSE.
+				*/
+
+			}
+		}
+		else{
+			return "Puzzle was not added. Even though it was valid.";
+		}
+	}
+	return 0;
+}
+
 static char* run_all_tests(){
 
 	mu_run_test(test_new_puzzle);
@@ -270,8 +358,10 @@ static char* run_all_tests(){
 	mu_run_test(test_set_value);
 	mu_run_test(test_get_value);
 	mu_run_test(test_is_value_present);
-
-
+	//This test works and runs, but is not comprehensive.
+	//See the comment at the end of the function.
+	mu_run_test(test_is_value_valid);
+	
 	porcelain_cleanup();
 	return 0;
 }
