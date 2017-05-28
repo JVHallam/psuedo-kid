@@ -282,13 +282,6 @@ static char* test_set_all_valid_values(){
 	return 0;
 }
 
-
-/*
-	This test is bad:
-		It only tests for what we need
-
-		Doesn't check if it's changing things it shouldn't.
-*/
 BOOL is_cell_in_area(cell** target_cell, cell*** target_area){
 	for(cell*** area_ptr = target_area; area_ptr < (target_area + 9); ++area_ptr){
 		if(*area_ptr == target_cell){
@@ -357,6 +350,8 @@ static char* test_update_surrounding_areas(){
 
 	return 0;
 }
+
+
 
 
 
