@@ -107,3 +107,68 @@ cell** parse_file_to_grid(char* file_name){
 		return 0;
 	}
 }
+
+//A better programmer would be able to use things like function pointers
+//To do this all wrapped up into 1 function.
+
+void print_grid_values(cell** grid){
+	puts(""); //Make it clearer on screen
+
+	cell** grid_ptr = grid;
+
+	for(int row_index = 0; row_index < 9; ++row_index){
+
+		for(int col_index = 0; col_index < 9; ++col_index){
+			printf("%i ", (*grid_ptr)->value);
+			++grid_ptr;
+		}
+
+		puts("");
+	}
+
+	puts(""); //Make it clearer on screen
+}
+
+void print_grid_occupied(cell** grid){
+	puts(""); //Make it clearer on screen
+
+	cell** grid_ptr = grid;
+
+	for(int row_index = 0; row_index < 9; ++row_index){
+
+		for(int col_index = 0; col_index < 9; ++col_index){
+			printf("%i ", (*grid_ptr)->occupied);
+			++grid_ptr;
+		}
+
+		puts("");
+	}
+
+	puts(""); //Make it clearer on screen
+}
+
+void print_cells_valid_values(cell* target_cell){
+	for(int valid_value_index = 0; valid_value_index < 9; ++valid_value_index){
+		printf("%i\n", target_cell->valid_values[valid_value_index] );
+	}
+}
+
+void print_grid_valid_values(cell** grid){
+	puts(""); //Make it clearer on screen
+
+	cell** grid_ptr = grid;
+
+	for(int row_index = 0; row_index < 9; ++row_index){
+
+		for(int col_index = 0; col_index < 9; ++col_index){
+
+			printf("Cell %i\n", ((row_index * 9) + col_index));
+			print_cells_valid_values(*grid_ptr);
+			++grid_ptr;
+			printf("\n");
+		}
+	}
+
+	puts(""); //Make it clearer on screen
+}
+

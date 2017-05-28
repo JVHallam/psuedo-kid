@@ -60,7 +60,22 @@ BOOL is_value_present(int choice, int choice_index, int value, char* key);
 //Returns true/false, based on if a value can be put in a cell.
 BOOL is_value_valid(int choice, int choice_index, int cell_index, int value, char* key);
 
+/*
+	If you have a cell in a chamber, it can be difficult to find the index of it's row 
+	and column. This is here to do just that.
+
+	choice + choice_index => are given by you to locate the cell.
+
+	wanted_indexes_area => 	the area (ROW, COLUMN, CHAMBER) that you want to find out for
+							the given cell.
+
+*/
+int get_cells_area_index(	int choice, int choice_index, int cell_index,\
+							int wanted_indexes_area, char* key);
+
 //Prints the grid out.
 void print_grid(char* key);
+
+void print_target_grid_valid_values(char* key);
 
 #endif

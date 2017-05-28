@@ -342,11 +342,160 @@ static char* test_is_value_valid(){
 					the new_value, set to FALSE.
 				*/
 
+				int choices_to_check[2] = {0, 0};
+
+				switch(choice){
+					case ROW:
+						choices_to_check[0] = COLUMN;
+						choices_to_check[1] = CHAMBER;
+						break;
+
+					case COLUMN:
+						choices_to_check[0] = ROW;
+						choices_to_check[1] = CHAMBER;
+						break;
+
+					case CHAMBER:
+						choices_to_check[0] = ROW;
+						choices_to_check[1] = COLUMN;
+						break;
+				}
+
+				//Now itterate over choices_to_check[0] and [1]
+				//Check that new_value can't go in any of those spots.
+
+				for(\
+					int choices_to_check_index = 0;\
+					choices_to_check_index < 2;
+					++choices_to_check_index
+				){
+					int checking_choice = choices_to_check[choices_to_check_index];
+
+					//First thing we need is the area_index of the current cell.
+//int get_cells_area_index(	int choice, int choice_index, int cell_index,\
+//							int wanted_indexes_area, char* key);
+					int checking_area_index = get_cells_area_index(	choice, area_index,
+																	cell_index, checking_choice,
+																	puzzle_key);
+
+
+					for(\
+						int checking_cell_index = 0;\
+						checking_cell_index < 9;
+						++checking_cell_index
+					){
+						//Use is_value_valid over the new area. for new_value
+
+						BOOL is_checking_cell_valid = is_value_valid(	checking_choice,\
+																		checking_area_index,\
+																		checking_cell_index,\
+																		new_value,\
+																		puzzle_key
+																	);
+
+						mu_assert(\
+							"A cell in the other area has been set to TRUE when it should be false",\
+							is_checking_cell_valid == FALSE
+						);
+					}
+				}
 			}
+			printf("puzzle_key: %s\n", puzzle_key);
+			print_target_grid_valid_values(puzzle_key);
 		}
 		else{
 			return "Puzzle was not added. Even though it was valid.";
 		}
+	}
+	return 0;
+}
+
+//int get_cells_area_index(	int choice, int choice_index, int cell_index,\ 
+//							int wanted_indexes_area, char* key);
+
+static char* test_get_cells_area_index(){
+
+	char* puzzle_key = "test/resources/test_get_cells_area_index.puzzle";
+	if(new_puzzle(puzzle_key)){
+		//For rows:
+		for(int row_index = 0; row_index < 9; ++row_index){
+			for(int cell_index = 0; cell_index < 9; ++cell_index){
+				int gotten_column_index = get_cells_area_index(	ROW, row_index, cell_index, \
+																COLUMN, puzzle_key);
+
+				//Check that gotten_column_index = cell_index;
+				mu_assert(\
+					"Recieved Column index is not as expected.",\
+					cell_index == gotten_column_index
+				);
+
+				int gotten_chamber_index = get_cells_area_index(	ROW, row_index, cell_index, \
+																	CHAMBER, puzzle_key);
+
+				//The chamber we're in is (cell_index / 3) + ((row_index / 3) * 3)
+				int actual_chamber_index = (cell_index / 3) + ((row_index / 3) * 3);
+
+				mu_assert(\
+					"The recieved chamber_index was different from the expected index.",\
+					gotten_chamber_index == actual_chamber_index
+				);
+			}
+		}
+
+		//For columns:
+		for(int column_index = 0; column_index < 9; ++column_index){
+			for(int cell_index = 0; cell_index < 9; ++cell_index){
+
+				int gotten_row_index = get_cells_area_index( COLUMN, column_index,\
+																cell_index, ROW, puzzle_key);
+
+				int expected_row_index = cell_index;
+
+				mu_assert(\
+					"Gotten row_index was not as expected",\
+					gotten_row_index == expected_row_index
+				);
+
+				int gotten_chamber_index = get_cells_area_index(COLUMN, column_index,\
+																cell_index, CHAMBER, puzzle_key);
+
+				int expected_chamber_index = (column_index / 3) + ((cell_index / 3) * 3);
+
+				mu_assert(\
+					"Gotten chamber_index was not as expected.",\
+					gotten_chamber_index == expected_chamber_index
+				);
+			}
+		}
+
+		//For chambers:
+		for(int chamber_index = 0; chamber_index < 9; ++chamber_index){
+			for(int cell_index = 0; cell_index < 9; ++cell_index){
+
+				int gotten_row_index = get_cells_area_index(CHAMBER, chamber_index,\
+															cell_index, ROW, puzzle_key);
+
+				int expected_row_index = ((chamber_index / 3) * 3) + (cell_index / 3);
+				
+				mu_assert(\
+					"Gotten row index was not as expected.",\
+					gotten_row_index == expected_row_index
+				);
+
+				int gotten_column_index = get_cells_area_index(CHAMBER, chamber_index,\
+																cell_index, COLUMN, puzzle_key);
+				//
+				int expected_column_index = (cell_index % 3) + ((chamber_index % 3) * 3);
+
+				mu_assert(\
+					"Gotten column index was not as expected.",\
+					gotten_column_index == expected_column_index
+				);
+			}
+		}
+	}
+	else{
+		return "Couldn't open a valid puzzle";
 	}
 	return 0;
 }
@@ -358,10 +507,13 @@ static char* run_all_tests(){
 	mu_run_test(test_set_value);
 	mu_run_test(test_get_value);
 	mu_run_test(test_is_value_present);
+	mu_run_test(test_get_cells_area_index);
+
 	//This test works and runs, but is not comprehensive.
 	//See the comment at the end of the function.
 	mu_run_test(test_is_value_valid);
 	
+
 	porcelain_cleanup();
 	return 0;
 }

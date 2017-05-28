@@ -233,3 +233,43 @@ BOOL is_value_valid(int choice, int choice_index, int cell_index, int value, cha
 		
 	return was_value_valid;
 }
+
+//This can be done via some simple maths. However, i've already written a load of functions
+//For different things that already calculate all of this.
+int get_cells_area_index(	int choice, int choice_index, int cell_index,\
+							int wanted_indexes_area, char* key){
+
+	if( \
+		is_choice_valid(choice) && \
+		is_index_valid(choice_index) && \
+		is_index_valid(cell_index) && \
+		is_choice_valid(wanted_indexes_area)
+	){
+		//Get the cell:
+		cell** target_cell = get_cell_from_table(choice, choice_index, cell_index, key);
+		cell** target_grid = get_from_table(key, puzzle_container);
+
+		//call on the functions from logic.h
+		switch(wanted_indexes_area){
+			case ROW:
+				return get_cells_row_index(target_cell, target_grid);
+				break;
+
+			case COLUMN:
+				return get_cells_column_index(target_cell, target_grid);
+				break;
+
+			case CHAMBER:
+				return get_cells_chamber_index(target_cell, target_grid);
+				break;
+		}
+	}
+	else{
+		return 0;
+	}
+}
+
+void print_target_grid_valid_values(char* key){
+	//void print_grid_valid_values(cell** grid);
+	print_grid_valid_values(get_from_table(key, puzzle_container));
+}
