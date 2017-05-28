@@ -177,8 +177,6 @@ static char* test_set_value(){
 				set_value(COLUMN, 0, cell_index, test_value, test_puzzle) == FALSE
 			);
 		}
-
-		print_grid(test_puzzle);
 	}
 	else{
 		return "Test puzzle wasn't added to the puzzle list.";
@@ -400,8 +398,6 @@ static char* test_is_value_valid(){
 					}
 				}
 			}
-			printf("puzzle_key: %s\n", puzzle_key);
-			print_target_grid_valid_values(puzzle_key);
 		}
 		else{
 			return "Puzzle was not added. Even though it was valid.";
