@@ -137,12 +137,8 @@ void print_grid_occupied(cell** grid){
 }
 
 void print_cells_valid_values(cell* target_cell){
-	for(\
-		BOOL* potential_value = target_cell->valid_values;\
-		potential_value < &(target_cell->valid_values[8]);\
-		++potential_value
-	){
-		printf("%i\n", *potential_value);
+	for(int valid_value_index = 0; valid_value_index < 9; ++valid_value_index){
+		printf("%i\n", target_cell->valid_values[valid_value_index] );
 	}
 }
 
