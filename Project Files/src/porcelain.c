@@ -168,7 +168,12 @@ int get_value(int choice, int choice_index, int cell_index, char* key){
 void print_grid(char* key){
 	cell** target_table = get_from_table(key, puzzle_container);
 
-	print_grid_values(target_table);
+	if(target_table){
+		print_grid_values(target_table);
+	}
+	else{
+		printf("Couldn't retrieve puzzle from table.\n");
+	}
 }
 
 //From logic.h
@@ -272,4 +277,10 @@ int get_cells_area_index(	int choice, int choice_index, int cell_index,\
 void print_target_grid_valid_values(char* key){
 	//void print_grid_valid_values(cell** grid);
 	print_grid_valid_values(get_from_table(key, puzzle_container));
+}
+
+BOOL is_finished(char* key){
+	cell** target_table = get_from_table(key, puzzle_container);
+
+	return is_puzzle_complete(target_table);
 }

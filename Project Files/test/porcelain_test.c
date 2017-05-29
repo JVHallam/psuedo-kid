@@ -496,6 +496,72 @@ static char* test_get_cells_area_index(){
 	return 0;
 }
 
+//BOOL is_finished(char* key);
+static char* test_is_finished(){
+	//Have a completed grid. Check it returns true.
+	char* completed_grid = "test/resources/completed.puzzle";
+
+	if(new_puzzle(completed_grid)){
+		//Check it's complete.
+		BOOL was_puzzle_finished = is_finished(completed_grid);
+
+		mu_assert(\
+			"Completed grid was returning false.",\
+			was_puzzle_finished == TRUE
+		);
+	}
+	else{
+		return "Valid key couldn't be added to the table.";
+	}
+
+	//Have an incomplete grid
+	char* incomplete_grid = "test/resources/valid1.puzzle";
+
+	if(new_puzzle){
+		BOOL was_puzzle_finished = is_finished(incomplete_grid);
+
+		mu_assert(\
+			"Incomplete grid was coming back as finished.",\
+			was_puzzle_finished == FALSE
+		);	
+	}
+
+	//Have an incomplete grid, then complete it.
+	//First cell should be 3.
+	char* almost_complete = "test/resources/almost_complete.puzzle";
+
+	if(new_puzzle(almost_complete)){
+		BOOL was_puzzle_finished = is_finished(almost_complete);
+
+		mu_assert(\
+			"Incomplete puzzle was coming back as finished",\
+			was_puzzle_finished == FALSE
+		);
+
+		//BOOL set_value(int choice, int choice_index, int cell_index, int value, char* key);
+		BOOL set_result = set_value(ROW, 0, 0, 3, almost_complete);
+
+		if(set_result){
+			was_puzzle_finished = is_finished(almost_complete);
+
+			mu_assert(\
+				"puzzle coming back as false, after being completed.",\
+				was_puzzle_finished == TRUE
+			);
+		}
+		else{
+			return "Couldn't set a valid result.";
+		}
+
+
+	}
+	else{
+		return "Valid key couldn't be added to the table.";
+	}
+
+	return 0;
+}
+
 static char* run_all_tests(){
 
 	mu_run_test(test_new_puzzle);
@@ -504,11 +570,8 @@ static char* run_all_tests(){
 	mu_run_test(test_get_value);
 	mu_run_test(test_is_value_present);
 	mu_run_test(test_get_cells_area_index);
-
-	//This test works and runs, but is not comprehensive.
-	//See the comment at the end of the function.
 	mu_run_test(test_is_value_valid);
-	
+	mu_run_test(test_is_finished);
 
 	porcelain_cleanup();
 	return 0;

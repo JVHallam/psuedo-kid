@@ -78,4 +78,7 @@ void print_grid(char* key);
 
 void print_target_grid_valid_values(char* key);
 
+//Returns TRUE if puzzle is in a "Completed" state, Where all values are 1 - 9.
+BOOL is_finished(char* key);
+
 #endif

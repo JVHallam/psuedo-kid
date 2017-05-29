@@ -36,3 +36,14 @@ porcelain_test:
 	"src/grid_traversal.c" \
 	-o "bin/porcelain_test"
 	./bin/porcelain_test
+
+algorithms_test:
+	$(CC) $(CFLAGS) "test/algorithms_test.c" \
+	"src/algorithms.c" \
+	"src/porcelain.c" \
+	"src/hash_table.c" \
+	"src/grid.c" \
+	"src/logic.c" \
+	"src/grid_traversal.c" \
+	-o "bin/algorithms_test";
+	./bin/algorithms_test
