@@ -351,6 +351,77 @@ static char* test_update_surrounding_areas(){
 	return 0;
 }
 
+//BOOL is_puzzle_complete(cell** grid_start);
+static char* test_is_puzzle_complete(){
+	/*
+		Have a completed puzzle
+			Check it returns true
+
+		Have an incomplete puzzle
+			Check it returns false
+	*/
+	cell** completed_puzzle = parse_file_to_grid("test/resources/completed.puzzle");
+
+	if(completed_puzzle){
+		BOOL has_puzzle_been_completed = is_puzzle_complete(completed_puzzle);
+
+		mu_assert(\
+			"completed_puzzle has come back as false.",\
+			has_puzzle_been_completed == TRUE
+		);
+
+		//Put the board into a failing state, by putting a value outside of the 1 - 9 range
+		int failing_values[3] = {0, -1, 10};
+
+		for(int failing_index = 0; failing_index < 3; ++failing_index){
+			(*completed_puzzle)->value = failing_values[failing_index];
+
+			has_puzzle_been_completed = is_puzzle_complete(completed_puzzle);
+
+			mu_assert(\
+				"Puzzle contains a value outside of the 1 - 9 range and is coming back as" \
+				" true.",\
+				has_puzzle_been_completed == FALSE
+			);
+		}
+
+		free_grid(completed_puzzle);
+	}
+	else{
+		return "Valid file couldn't be opened.";
+	}
+
+	cell** incomplete_puzzle = parse_file_to_grid("test/resources/only_zeroes.puzzle");
+
+	if(incomplete_puzzle){
+		BOOL has_puzzle_been_completed = is_puzzle_complete(incomplete_puzzle);
+
+		mu_assert(\
+			"incomplete_puzzle has been deemed completed",\
+			has_puzzle_been_completed == FALSE
+		);
+
+		//Put the board into a "complete" state, then re-test it.
+		for(\
+			cell** grid_ptr = incomplete_puzzle; \
+			grid_ptr < (incomplete_puzzle + 81); \
+			++grid_ptr \
+		){
+			(*grid_ptr)->value = 1;
+		}
+
+		has_puzzle_been_completed = is_puzzle_complete(incomplete_puzzle);
+
+		mu_assert(\
+			"Board is still coming back false, even though it's in a 'completed' state",\
+			has_puzzle_been_completed == TRUE
+		);
+
+		free_grid(incomplete_puzzle);
+	}
+
+	return 0;
+}
 
 
 
@@ -365,6 +436,8 @@ static char* run_all_tests(){
 		mu_run_test(test_is_present);
 		mu_run_test(test_set_all_valid_values);
 		mu_run_test(test_update_surrounding_areas);
+
+		mu_run_test(test_is_puzzle_complete);
 
 		free_grid(test_grid);
 		return 0;

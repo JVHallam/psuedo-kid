@@ -2,6 +2,8 @@
 #include "../include/constants.h"
 #include "../include/grid_traversal.h"
 
+#include <stdio.h>
+
 int get_cell_index(cell** target_cell, cell** grid_start){
 	return target_cell - grid_start;
 }
@@ -110,4 +112,23 @@ void update_surrounding_areas(cell** target_cell, cell** grid_start){
 	update_column(target_cell, grid_start);
 
 	update_chamber(target_cell, grid_start);
+}
+
+BOOL is_puzzle_complete(cell** grid_start){
+	BOOL has_completed_puzzle = TRUE;
+
+	for(cell** grid_ptr = grid_start; grid_ptr < (grid_start + 81); ++grid_ptr){
+		int cell_value = (*grid_ptr)->value;
+
+		//If it's a completed cell
+		if(1 <= cell_value && cell_value <= 9){
+			continue;
+		}
+		else{ //It's not a completed cell, thus the grid isn't completed.
+			has_completed_puzzle = FALSE;
+			break;
+		}
+	}
+
+	return has_completed_puzzle;
 }

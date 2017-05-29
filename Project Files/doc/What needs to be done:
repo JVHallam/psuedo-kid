@@ -1,5 +1,0 @@
-What needs to be done:
-	porcelain needs moving:
-		The hash table should be in a seperate header file, source file and test file.
-
-		Start testing the damned table.

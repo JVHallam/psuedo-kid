@@ -1,0 +1,8 @@
+There should be an overarching file.
+    psuedo-kid.c
+        contains main
+
+        adds a puzzle to porcelain.c
+
+        while is_puzzle_solved(key) == false
+            call algorithms by passing the keys around.
