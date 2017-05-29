@@ -19,8 +19,8 @@ int get_cells_chamber_index(cell** target_cell, cell** grid_start);
 //Check if a value is present in an area, and then return TRUE / FALSE
 BOOL is_present(cell*** given_area, int value);
 
-//Point this at a cell and then update it's valid_values bool array based on the surrounding
-//area
+//Updates the valid_values of every cell in a grid.
+//If a cell has a value That is non-zero, set all of it's valid values to FALSE
 void set_all_valid_values(cell** grid_start);
 
 //Takes a cell that has just had it's value changed. It then updates the row, column and chamber
