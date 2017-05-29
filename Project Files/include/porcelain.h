@@ -49,6 +49,7 @@ void porcelain_cleanup();
 
 	Where choice is ROW, CHAMBER, COLUMN, CELL, as defined in grid.h
 */
+//Set a value, then set all of it's valid values to FALSE
 BOOL set_value(int choice, int choice_index, int cell_index, int value, char* key);
 
 //Returns the value for a cell.

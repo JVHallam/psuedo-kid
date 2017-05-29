@@ -109,6 +109,13 @@ BOOL is_choice_valid(int choice){
 	}
 }
 
+void null_all_valid_values(cell** target_cell){
+	for(int index = 0; index < 9; ++index){
+		(*target_cell)->valid_values[index] = FALSE;
+
+	}
+}
+
 BOOL set_value(int choice, int choice_index, int cell_index, int value, char* key){
 	//First off, validate the input:	
 	cell** target_cell = 0;
@@ -133,6 +140,8 @@ BOOL set_value(int choice, int choice_index, int cell_index, int value, char* ke
 			(*target_cell)->value = value;
 
 			cell** target_grid = get_from_table(key, puzzle_container);
+
+			null_all_valid_values(target_cell);
 
 			update_surrounding_areas(target_cell, target_grid);
 

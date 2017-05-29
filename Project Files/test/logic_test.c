@@ -176,6 +176,22 @@ static char* test_is_present(){
 	return 0;
 }
 
+int count_valid_values(cell** target_cell){
+	//Count the number of valid values a cell has.
+	int valid_count = 0;
+
+	for(int index = 0; index < 9; ++index){
+		if((*target_cell)->valid_values[index] == TRUE){
+			++valid_count;
+		}
+	}
+
+	return valid_count;
+}
+
+/*
+	If a cell has a non zero value, then all of it's valid values are set to zero.
+*/
 static char* test_set_all_valid_values(){
 	/*
 		puzzles to test this with:
@@ -277,6 +293,42 @@ static char* test_set_all_valid_values(){
 	}
 	else{
 		return "Failed to parse file to grid";
+	}
+
+
+	cell** top_row = parse_file_to_grid("test/resources/top_row.puzzle");
+
+	if(top_row){
+		set_all_valid_values(top_row);
+		//Every other cell on the top row has a value.
+		//Every other cell, therefore, should have no valid values.
+		//The others should have atleast one.
+
+		for(cell** top_row_ptr = top_row; top_row_ptr < (top_row + 9); ++top_row_ptr){
+			int valid_count = count_valid_values(top_row_ptr);
+
+			if((*top_row_ptr)->value == 0){
+				//Should have some valid values
+				mu_assert(
+					"An empty cell should have atleast 1 valid value.",\
+					valid_count > 0
+				);
+			}
+			else{
+				//Should have no valid values.
+				mu_assert(
+					"A cell with a value in it should have no valid values.",\
+					valid_count == 0
+				);
+			}
+
+			printf("Value:%i, Valid count: %i\n", (*top_row_ptr)->value, valid_count);
+		}
+
+		free_grid(top_row);
+	}
+	else{
+		return "Valid file couldn't be used.";
 	}
 
 	return 0;
