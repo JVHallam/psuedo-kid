@@ -121,9 +121,16 @@ void print_grid_values(cell** grid){
 		for(int col_index = 0; col_index < 9; ++col_index){
 			printf("%i ", (*grid_ptr)->value);
 			++grid_ptr;
-		}
 
+			if((col_index % 3) == 2){
+				printf("\t");
+			}
+		}
 		puts("");
+
+		if((row_index % 3) == 2){
+			puts("");
+		}
 	}
 
 	puts(""); //Make it clearer on screen
@@ -149,7 +156,14 @@ void print_grid_occupied(cell** grid){
 
 void print_cells_valid_values(cell* target_cell){
 	for(int valid_value_index = 0; valid_value_index < 9; ++valid_value_index){
-		printf("%i\n", target_cell->valid_values[valid_value_index] );
+		int value_to_print = 0;
+
+		if(target_cell->valid_values[valid_value_index]){
+			value_to_print = (valid_value_index + 1);
+		}
+		
+		//Else, it's blank.
+		printf("%i, ", value_to_print);
 	}
 }
 
@@ -162,7 +176,7 @@ void print_grid_valid_values(cell** grid){
 
 		for(int col_index = 0; col_index < 9; ++col_index){
 
-			printf("Cell %i\n", ((row_index * 9) + col_index));
+			printf("\nCell %i\n", ((row_index * 9) + col_index));
 			print_cells_valid_values(*grid_ptr);
 			++grid_ptr;
 			printf("\n");

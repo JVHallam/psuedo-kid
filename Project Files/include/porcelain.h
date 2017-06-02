@@ -79,6 +79,10 @@ void print_grid(char* key);
 
 void print_target_grid_valid_values(char* key);
 
+//Change the valid_value state for a value. Set it to TRUE or FALSE.
+BOOL edit_valid_value(	int choice, int choice_index, int cell_index, int value,\
+						BOOL new_state, char* key);
+
 //Returns TRUE if puzzle is in a "Completed" state, Where all values are 1 - 9.
 BOOL is_finished(char* key);
 

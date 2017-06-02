@@ -112,7 +112,6 @@ BOOL is_choice_valid(int choice){
 void null_all_valid_values(cell** target_cell){
 	for(int index = 0; index < 9; ++index){
 		(*target_cell)->valid_values[index] = FALSE;
-
 	}
 }
 
@@ -292,4 +291,28 @@ BOOL is_finished(char* key){
 	cell** target_table = get_from_table(key, puzzle_container);
 
 	return is_puzzle_complete(target_table);
+}
+
+BOOL edit_valid_value(	int choice, int choice_index, int cell_index, int value,\
+						BOOL new_state, char* key){
+	//Go to a cell.
+	if(\
+		is_new_value_valid(value) &&\
+		is_choice_valid(choice) && \
+		is_index_valid(choice_index) && \
+		is_index_valid(cell_index)
+	){
+		cell** target_cell = get_cell_from_table(choice, choice_index,\
+											 cell_index, key);
+
+		if(target_cell){
+			int valid_value_index = value - 1;
+			(*target_cell)->valid_values[valid_value_index] = new_state;
+
+			return TRUE;
+		}
+	}
+	else{
+		return FALSE;
+	}
 }
