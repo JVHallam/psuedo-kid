@@ -23,9 +23,9 @@ int main(){
 //BOOL single_spot_algorithm(int choice, int choice_index, int value, char* key)
 
 static char* test_single_spot_algorithm(){
-	//char* puzzle = "test/resources/valid_puzzles/evil.puzzle";
+	char* puzzle = "test/resources/valid_puzzles/evil.puzzle";
 	//char* puzzle = "test/resources/valid_puzzles/hard2.puzzle";
-	char* puzzle = "test/resources/valid_puzzles/super_fiendish.puzzle";
+	//char* puzzle = "test/resources/valid_puzzles/super_fiendish.puzzle";
 
 	if(new_puzzle(puzzle)){
 		print_grid(puzzle);

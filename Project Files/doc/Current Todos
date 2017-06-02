@@ -1,8 +1,17 @@
-There should be an overarching file.
-    psuedo-kid.c
-        contains main
+There should be a final file:
+    implementaion of algorithms
 
-        adds a puzzle to porcelain.c
+    takes in a command line argument
 
-        while is_puzzle_solved(key) == false
-            call algorithms by passing the keys around.
+    parses it
+
+    solves the puzzle to the best of it's ability.
+
+    prints out the result.
+
+
+Also:
+    Check for memory leaks.
+
+
+

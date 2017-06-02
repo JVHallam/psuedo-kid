@@ -14,6 +14,8 @@ Single Occupant:
     A value for a cell may fit the single occupant rule at times it doesn't quite fit the single spot algorithm.
 
 Subline theorem:
+    Sublining is a messy application of grouping. Grouping will absolve sublining of it's mediocraty
+
 	If a value in a chamber
 	has only 2 cells that it is valid in
 	then it's safe to say that i will occur in one of those 2 cells.
@@ -25,8 +27,40 @@ Subline theorem:
 	It's safe to assume that the number will occur in those 2 spaces. Therefore, the value cannot
 	occur anywhere else in the chamber.
 
+As an algorithm:
+
+	Have an area:
+		find that only 2 cells that can hold X:
+			if their chambers match:
+				check if their rows match:
+					if they do:
+						no other cell in their chamber or row can hold that value.
+
+				check if their columns match:
+					if they do
+						no other cell in their chamber or column can hold that value.
+
+		Do the same for 3 cells that can hold x. Same applies.
+
+
+
 Phantom Occupancy:
     If 2 cells in the same area have only 2 possible occupants and both list of occupants match, these cells are as
     good as occupied when using the single spot algorithm.
 
     This can only be carried out on areas.
+
+
+group theorem: (also known as hidden pairs)
+	look at an area
+	If you have a value
+	that can only go in 2 cells
+	and you have a second value
+	that can only go in the same 2 cells
+	then no other values could possibly go in those cells
+	therefore, the only valid values for these 2 cells is the 2 aforementioned values.
+
+	Look at an area
+	if you have n values
+	that can only go in the same n cells
+	then the valid values for those cells are only the aforementioned.
