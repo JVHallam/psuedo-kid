@@ -3,6 +3,14 @@ CC := gcc
 
 main:
 	echo "Nothing";
+	$(CC) $(CFLAGS) "src/main.c" \
+	"src/algorithms.c" \
+	"src/porcelain.c" \
+	"src/hash_table.c" \
+	"src/grid.c" \
+	"src/logic.c" \
+	"src/grid_traversal.c" \
+	-o bin/psuedokid;
 
 grid_test:
 	$(CC) $(CFLAGS) "test/grid_tests.c" "src/grid.c" -o "bin/grid_tests";
