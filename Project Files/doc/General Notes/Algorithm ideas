@@ -13,6 +13,18 @@ Single Occupant:
 
     A value for a cell may fit the single occupant rule at times it doesn't quite fit the single spot algorithm.
 
+Subline theorem:
+	If a value in a chamber
+	has only 2 cells that it is valid in
+	then it's safe to say that i will occur in one of those 2 cells.
+
+	If these 2 cells are in the same line, then the number will occur in that line.
+	Therefore, all other cells in that line, cannot hold the value.
+
+	If a value in a line can only be held by 2 cells and those 2 cells are in the same chamber,
+	It's safe to assume that the number will occur in those 2 spaces. Therefore, the value cannot
+	occur anywhere else in the chamber.
+
 Phantom Occupancy:
     If 2 cells in the same area have only 2 possible occupants and both list of occupants match, these cells are as
     good as occupied when using the single spot algorithm.
