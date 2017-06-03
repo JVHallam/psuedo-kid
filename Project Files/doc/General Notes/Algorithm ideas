@@ -64,3 +64,53 @@ group theorem: (also known as hidden pairs)
 	if you have n values
 	that can only go in the same n cells
 	then the valid values for those cells are only the aforementioned.
+
+	Steps:
+		Have an area
+
+		for each value that isn't present
+
+		find the ones that can only occupy 2 spaces
+
+		if there's more than 2:
+			check if they can both occupy the same 2 spaces
+
+			if so:
+				then no other values can be placed in those cells.
+
+	For more than pairs:
+		have an area
+
+		find a value that can occupy (n) spaces
+
+		find (n - 1) values that can only occupy those spaces
+
+		if so:
+			no other values can go in those cells.
+
+sublining - redux:
+	sublining is sort of the opposite of hidden pairs in a sense.
+
+	look at an area
+
+	if there's a pair of cells that can have only have the same 2 values as one another, then no other cell in the area can hold those values
+
+	Steps:
+
+		look at an area
+
+		find a cell that only has 2 valid values - call it cell a
+
+		find another cell with only 2 valid values - call it cell b
+
+		If a and b have the same valid value pair, then no other cell in that area can hold those values.
+
+		for infinity:
+
+		look at an area
+
+		find a cell that can hold (n) valid values
+
+		find (n - 1) more cells that can hold only those values
+
+		if the above is found, no other cell in that area can have those valid values.
