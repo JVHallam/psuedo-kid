@@ -55,3 +55,14 @@ algorithms_test:
 	"src/grid_traversal.c" \
 	-o "bin/algorithms_test";
 	./bin/algorithms_test
+
+memory_leaks:
+	$(CC) $(CFLAGS) "test/memory_leaks.c" \
+	"src/algorithms.c" \
+	"src/porcelain.c" \
+	"src/hash_table.c" \
+	"src/grid.c" \
+	"src/logic.c" \
+	"src/grid_traversal.c" \
+	-o "bin/memory_leaks";
+	./bin/memory_leaks;

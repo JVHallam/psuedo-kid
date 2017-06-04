@@ -15,6 +15,8 @@ void porcelain_cleanup(){
 	if(puzzle_container){
 		free_table(puzzle_container);
 	}
+
+	puzzle_container = 0;
 }
 
 BOOL new_puzzle(char* file_name){
@@ -63,6 +65,8 @@ cell** get_cell_from_table(int choice, int choice_index, int cell_index, char* k
 	if(target_area){
 		if(0 <= cell_index && cell_index <= 8){
 			target_cell = *(target_area + cell_index);
+
+			free(target_area);
 		}
 		else{
 			printf("cell_index wasn't in the range: 0 <= cell_index <= 8\n");
@@ -215,7 +219,13 @@ BOOL is_value_present(int choice, int choice_index, int value, char* key){
 					desired_area = get_chamber(choice_index, target_grid);
 					break;
 			}
-			was_value_present = is_present(desired_area, value);
+			if(desired_area){
+				was_value_present = is_present(desired_area, value);
+				free(desired_area);
+			}
+			else{
+				printf("is_value_present couldn't retrieve an area\n");
+			}
 		}
 		else{
 			printf("Key given to is_value_present was invalid.\n");
