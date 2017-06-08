@@ -2,6 +2,7 @@
 #include "../include/algorithms.h"
 #include "../include/grid.h"
 #include "../include/grid_traversal.h"
+#include "../include/logic.h"
 #include <stdlib.h>
 
 void test_algorithms(char* puzzle_key){

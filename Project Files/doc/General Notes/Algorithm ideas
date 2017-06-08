@@ -88,6 +88,44 @@ group theorem: (also known as hidden pairs)
 		if so:
 			no other values can go in those cells.
 
+	As a rule for n:
+		look at an area
+
+		for value 1 - 9:
+			Have int valid_count[9]; where:
+				int values_index = value - 1;
+
+				valid_count[values_index] = number of times the value can appear in that area
+
+			for int n in range 1 to 9:
+				find n values that can appear in n cells
+
+				if n values can appear in n cells, e.g. 2 values can appear in 2 cells
+					see if ALL of them have the same valid cells
+					if so:
+						no other values can appear in those cells.
+
+
+
+
+
+	As a rule for n:
+
+		For group_size in the range of 1 to 9:
+			load all values that have a valid_locations_count of group_size into an array
+			++values_count
+
+			Now that we have all of the locations, we then need to find a valid group.
+
+			We do this by:
+				comparing n values from our array
+
+				if they all have 
+
+
+
+
+
 sublining - redux:
 	sublining is sort of the opposite of hidden pairs in a sense.
 
