@@ -35,4 +35,7 @@ BOOL subline_algorithm(int choice, int choice_index, int value, char* key);
 
 //BOOL hidden_pairs_algorithm(int choice, int choice_index, int value char* key);
 
+//Also known as hidden pairs
+BOOL grouping_algorithm(int choice, int choice_index, char* key);
+
 #endif

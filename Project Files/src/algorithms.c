@@ -86,6 +86,8 @@ BOOL single_occupant_algorithm(int choice, int choice_index, int cell_index, cha
 	return FALSE;
 }
 
+
+
 BOOL subline_algorithm(int choice, int choice_index, int value, char* key){
 	/*
 		Look at the area.
@@ -249,4 +251,38 @@ int wanted_indexes_area, char* key);
 	else{
 		return FALSE;
 	}
+}
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+typedef struct group_struct{
+	int values_count;
+	int* values_that_fit_group;
+}group_holder;
+
+get_valid_group_values(	int choice, int choice_index, int key,\
+						group_holder* current_group, int group_size){
+	/*
+		If a value has a valid_count equal to the group_size
+	*/
+}
+
+BOOL grouping_algorithm(int choice, int choice_index, char* key){
+
+	/*
+		What we want:
+			A list of values that can be a part of our current group.
+	*/
+
+	//Group size 0 and 9 achieve nothing as they indicate empty and full chambers.
+	for(int group_size = 1; group_size < 9; ++group_size){
+
+		/*	
+			What we want is to find all values that fit into our current group.
+		*/
+		group_holder* current_group = (group_holder*) malloc(sizeof(group_holder));
+
+		get_valid_group_values(choice, choice_index, key, current_group, group_size);
+
+	}
+
 }
