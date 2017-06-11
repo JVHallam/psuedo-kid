@@ -1,7 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int values_array_length = 9;
+#define TRUE 1
+#define FALSE 0
+
+typedef int BOOL;
+
+
+int values_array_length = 12;
 
 int values_array[] = {
 	0,
@@ -12,7 +18,10 @@ int values_array[] = {
 	50,
 	60,
 	70,
-	80
+	80,
+	90,
+	100,
+	110
 };
 
 void first_function(){
@@ -241,25 +250,22 @@ typedef struct p_array{
 }pointer_array;
 
 void sixth_print_pointer_array(pointer_array* pointers){
-	for(int offset = 0; offset < pointers->length; ++offset){
-		char current_char = 'a' + offset;
-		printf("%c: %i, ", current_char, (**(pointers->pointers + offset)) );
+
+	for(int offset = 0; offset < (pointers->length); ++offset){
+		//If the pointer is null, don't dereference it.
+		if(*(pointers->pointers + offset)){
+			printf("%i: %i, ", offset, (**(pointers->pointers + offset)) );
+		}
 	}
 
 	printf("\n");
 }
 
 void sixth_set_value(int* new_value, int index, pointer_array* pointers){
-	*(pointers->pointers + index) = new_value;
-
-	sixth_print_pointer_array(pointers);
-
-	//If it's the final pointer in the array.
-	
+	*(pointers->pointers + index) = new_value;	
 	if( (index + 1) == pointers->length){
 		sixth_print_pointer_array(pointers);
 	}
-	
 }
 
 void sixth_function(){
@@ -298,43 +304,63 @@ void sixth_function(){
 
 		int* values_array_end = values->values + (values->length - 1);
 
-		int level = 0;
+		const int initial_level = 0;
+
+		int level = initial_level;
+		int top_level = (pointers->length) - 1;
+
 		while(*(pointers->pointers) < values_array_end){
 			//Are we on the top level?
-			if(level != pointers->length){
+			if(level < top_level){
 
-				//Is the level above us at the end?
+				//If the level above ISN'T at the end
 				if( *(pointers->pointers + level + 1) < values_array_end){
-					//Go on up.
+					//Go up to it
 					++level;
 				}
 				else{
-					//It's at the end
-					//Is the current level at the end
-					if( *(pointers->pointers + level) < values_array_end ){
-						//Take us to the end.
-						int* new_value = *(pointers->pointers + level) + 1;	
-						sixth_set_value(new_value, level, pointers);
+					//The level above is at the end
 
-						if( *(pointers->pointers + level + 1) < values_array_end){
-							*(pointers->pointers + level + 1) = *(pointers->pointers + level);
+					//If the current level isn't at the end
+					if( *(pointers->pointers + level) < values_array_end ){
+
+						//first check if the level above is at the end
+						if( *(pointers->pointers + level ) < values_array_end){
+							//==-=-=-=-=-=-=-Problem code
+
+							//Increment us by 1
+							int* second_new_value = *(pointers->pointers + level) + 1;	
+							sixth_set_value(second_new_value, level, pointers);
+
+							//set the level above to be 1 past us
+							int* new_value = *(pointers->pointers + level) + 1;
+							sixth_set_value(new_value, level + 1, pointers);
+							
+							//Then go up
+							++level;
+							//==-=-=-=-=-=-=-Problem code
 						}
 						else{
+							//Leave the level above us at the end, go down a level.
 							--level;
 						}
 					}
 					else{
-						//We're at the end too
+						//We're at the end too. So go down a level.
 						--level;
 					}
 				}
 			}
 			else{
+				//We're on the top level
+
+				//If we're not at the end, move us along 1.
 				if(*(pointers->pointers + level) < values_array_end){
 					int* new_value = *(pointers->pointers + level) + 1;
 					sixth_set_value(new_value, level, pointers);
 				}
 				else{
+					//Go down a level.
 					--level;
 				}
 			}
@@ -352,10 +378,172 @@ void sixth_function(){
 	}
 
 }
+//void sixth_set_value(int* new_value, int index, pointer_array* pointers)
 
+//In this case, index is level
+void increment_target(int index, pointer_array* pointers, value_array* values){
+	//void sixth_print_pointer_array(pointer_array* pointers)
+	//sixth_print_pointer_array(pointers);
+
+	int* values_array_end = (values->values + (values->length - 1));
+
+	int* new_value = (*(pointers->pointers + index)) + 1;
+
+	for(int offset = index; offset < pointers->length; ++offset){
+
+		if( new_value <= values_array_end ){
+			sixth_set_value(new_value, offset, pointers);	
+		}
+
+		new_value = (*(pointers->pointers + offset)) + 1;		
+	}
+}
+
+//This function worked brilliantly, with no usage of recursion.
+void seventh_function(){
+
+	value_array* values = (value_array*) malloc(sizeof(value_array));
+	pointer_array* pointers = (pointer_array*) malloc(sizeof(pointer_array));
+
+	int* values_array_end = values->values + (values->length - 1);
+
+	int* ptr_array[] = {0, 0, 0, 0};
+	int ptr_array_length = 4;
+
+	if(values && pointers){
+		values->values = values_array;
+		values->length = values_array_length;
+
+		pointers->pointers = ptr_array;
+		pointers->length = ptr_array_length;
+
+		//Initialise the ptr_array=-=-=-==-=-=-=-
+		//Risky, i know. Setting the first value to before the values array.
+		//But it works.
+		sixth_set_value( values->values -1, 0, pointers);
+		increment_target(0, pointers, values);
+		//=-=-Initialisation end=-=-=-=-=-
+
+		int* values_array_end = values->values + (values->length - 1);
+
+		int level = 0;
+		int top_level = (pointers->length) - 1;
+
+		//The super problematic code begins!
+		//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+		//While the first level isn't at the end
+		while(*(pointers->pointers) < values_array_end){
+
+			//If we're not the top level
+			if(level != top_level){
+
+				//check if the level above us is at the end
+				if(*(pointers->pointers + level + 1) == values_array_end){
+
+					//Increment ourselves.
+					increment_target(level, pointers, values);
+
+					//If we're at the end now.
+					if(*(pointers->pointers + level) == values_array_end){
+						//Go down a level
+						--level;
+						continue;
+					}
+					else{
+						continue;
+					}
+				}
+				else{
+					//It's not at the end, so go up there.
+					++level;
+					//Start again.
+					continue;
+				}
+			}
+			else{
+				//It is the top level
+				while(*(pointers->pointers + level) < values_array_end){
+					increment_target(level, pointers, values);
+				}
+
+				//Go back down
+				--level;
+			}
+		}
+		//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+		free(values);
+		values = 0;
+		free(pointers);
+		pointers = 0;
+	}
+	else{
+		printf("Failed to initialise values or pointers.\n");
+	}
+}
+
+void eighth_function(){
+
+	value_array* values = (value_array*) malloc(sizeof(value_array));
+	pointer_array* pointers = (pointer_array*) malloc(sizeof(pointer_array));
+
+	int* values_array_end = values->values + (values->length - 1);
+
+	int* ptr_array[] = {0, 0, 0, 0};
+	int ptr_array_length = 4;
+
+	if(values && pointers){
+		values->values = values_array;
+		values->length = values_array_length;
+
+		pointers->pointers = ptr_array;
+		pointers->length = ptr_array_length;
+
+		//Initialise the ptr_array=-=-=-==-=-=-=-
+		//Risky, i know. Setting the first value to before the values array. But it works.
+		sixth_set_value( values->values -1, 0, pointers);
+		increment_target(0, pointers, values);
+
+		int* values_array_end = values->values + (values->length - 1);
+
+		int level = 0;
+		int top_level = (pointers->length) - 1;
+
+		while(*(pointers->pointers) < values_array_end){
+			
+			if( (*(pointers->pointers + level)) == values_array_end){
+				--level;
+			}
+			else{
+				//Our current level isn't at the end.
+
+				//If we're not at the top and the value above us isn't at the end.
+				if( 
+					(level < top_level) && \
+					(*(pointers->pointers + level + 1) != values_array_end)
+				){
+					++level;
+				}
+				else{
+					//We are at the top and are being evaluated by the first statement
+					//or we're not at the top but the level above us is at the end.
+					increment_target(level, pointers, values);
+				}
+			}
+		}
+		//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+		free(values);
+		values = 0;
+		free(pointers);
+		pointers = 0;
+	}
+	else{
+		printf("Failed to initialise values or pointers.\n");
+	}
+}
 
 int main(){
-	sixth_function();
+	eighth_function();
 
 	return 0;
 }
