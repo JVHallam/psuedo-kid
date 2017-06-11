@@ -137,9 +137,41 @@ static char* second_test(){
 	return 0;
 }
 
+static char* grouping_algorithm_test(){
+	//char* test_puzzle = "test/resources/valid_puzzles/super_fiendish.puzzle";
+	//char* test_puzzle = "test/resources/only_zeroes.puzzle";
+	char* test_puzzle = "test/resources/grouping_algorithm.puzzle";
+
+	if(new_puzzle(test_puzzle)){
+		
+		//int choice = COLUMN;
+		/*
+		for(int choice = 1; choice <= 3; ++choice){
+			puts("=-=-=-Choice=-=-=-");
+			char* choice_array[] = {"Row", "Column", "Chamber"};
+			int choice_index = choice - 1;
+			printf("Choice: %s\n", choice_array[choice_index]);
+
+			for(int choice_index = 0; choice_index < 9; ++choice_index){
+				printf("Choice_index: %i\n", choice_index);
+				grouping_algorithm(choice, choice_index, test_puzzle);
+			}
+		}
+		*/
+		int choice = CHAMBER;
+		int choice_index = 0;
+		
+		grouping_algorithm(choice, choice_index, test_puzzle);
+		
+	}
+
+	return 0;
+}
+
 static char* run_all_tests(){
-	mu_run_test(test_single_spot_algorithm);
+	//mu_run_test(test_single_spot_algorithm);
 	//mu_run_test(second_test);
+	mu_run_test(grouping_algorithm_test);
 
 	return 0;
 }
