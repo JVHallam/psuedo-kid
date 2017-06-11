@@ -1,6 +1,7 @@
 #include "../include/algorithms.h"
 #include "../include/porcelain.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 
 //Find how many cells in an area, a selected value can go into.
@@ -275,8 +276,6 @@ int count_valid_locations(int choice, int choice_index, int value, char* key){
 	if(!is_value_present(choice, choice_index, value, key)){
 
 		//count how many cells the value can already go into
-		int valid_location_count = 0;
-
 		for(int cell_index = 0; cell_index < 9; ++cell_index){
 			if(is_value_valid(choice, choice_index, cell_index, value, key)){
 				++valid_location_count;
@@ -329,7 +328,7 @@ void get_valid_group_values( int choice, int choice_index, char* key,\
 
 	if(current_group_count >= group_size){
 		current_group->values_that_fit = (int*)calloc(current_group_count, sizeof(int));
-		current_group_count->length = current_group_count;
+		current_group->length = current_group_count;
 
 		int* values_array_ptr = current_group->values_that_fit;
 
@@ -341,6 +340,99 @@ void get_valid_group_values( int choice, int choice_index, char* key,\
 			}
 		}
 	}
+}
+
+void print_pointer_arrays_array(pointer_array* pointers){
+	if(pointers){
+		printf("Length: %i\nValues: ", pointers->length);
+
+		for(int i = 0; i < pointers->length; ++i){
+			if(*(pointers->pointers + i)){
+				printf("%i, ", **(pointers->pointers + i));
+			}
+		}
+		printf("\n\n");
+	}
+}
+
+void set_pointer_value(int* new_value, int index, pointer_array* pointers){
+	//Set the value
+	*(pointers->pointers + index) = new_value;
+	//If a change is made to the final pointer, trigger the all important 
+	//Block of code.
+
+	
+	if( (index + 1) == pointers->length){
+		print_pointer_arrays_array(pointers);
+	}
+}
+
+//When a value in the pointer array is incremented, all pointers above it are set to
+//The (previous pointers value + 1);
+void increment_target(int index, pointer_array* pointers, group_holder* groups){
+	int* int_array_end = (groups->values_that_fit + groups->length - 1);
+
+	int* new_value = (*(pointers->pointers + index)) +1;
+
+	for(int offset = index; offset < pointers->length; ++offset){
+		if(new_value <= int_array_end){
+			set_pointer_value(new_value, offset, pointers);
+		}
+
+		new_value = (*(pointers->pointers + offset)) + 1;
+	}
+}
+
+BOOL analyse_for_valid_groups(pointer_array* pointers, group_holder* groups){
+
+	/*
+		Do what the incrementing over arrays's code did, but change what the
+		code does on changes to the final pointer.
+	*/
+
+	/*
+		additional functions needed:
+			set_value(int*, index, pointer_array);
+
+		increment_target(0, pointers, values);
+
+		void set_value(int* new_value, int index, pointer_array* pointers)
+		void increment_target(int index, pointer_array* pointers, group_holder* groups)
+	*/
+
+	//Yes, i am setting the first pointer to point before the array.
+	//Yes, i am then incrementing it back on. This way, increment_target sets all
+	//Values for all other pointers.
+	set_pointer_value(groups->values_that_fit -1, 0, pointers);
+	increment_target(0, pointers, groups);
+
+	int level = 0;
+	int top_level = (groups->length) - 1;
+
+	int* values_array_end = groups->values_that_fit + (groups->length - 1);
+
+	while(*(pointers->pointers) < groups->values_that_fit){
+		if( (*(pointers->pointers + level)) ==  values_array_end){
+			--level;
+		}
+		else{
+			//our current pointer isn't pointing to the end.
+
+			//If we're not at the top and the value above us isn't at the end.
+			if(
+				(level < top_level) && \
+				(*(pointers->pointers + level + 1) != values_array_end)
+			){
+				++level;
+			}
+			else{
+				increment_target(level, pointers, groups);
+			}
+		}
+	}
+
+	//This needs to be an actual return value at some point.
+	return FALSE;
 }
 
 BOOL grouping_algorithm(int choice, int choice_index, char* key){
@@ -361,29 +453,28 @@ BOOL grouping_algorithm(int choice, int choice_index, char* key){
 
 		get_valid_group_values(choice, choice_index, key, current_group, group_size);
 
-		if(group_holder->length > 0){
+		if(current_group->length > 0){
 			//Now we need a pointer array.
 			pointer_array* pointers = (pointer_array*)malloc(sizeof(pointer_array));
+			pointers->length = group_size;
+			pointers->pointers = (int**)calloc(group_size, sizeof(int*));
 
-			/*	
-				Initialise the pointer array.
-					length = group_size;
+			BOOL had_effect = analyse_for_valid_groups(pointers, current_group);
 
-					pointers->pointers = calloc(group_size, sizeof(int**));
-
-				Pass pointers and group_holder to a new function that does 
-				the magic.
-
-				this basically just does what i already designed in the incrementing over 
-				arrays test work i spent a damn week on.
-				
-				that, will then find groups.
-
-				If we find a valid group (or hidden pair)
-					we eliminate all other valid_values from those cells.
+			//if(had_effect), get ready to return TRUE;
+			/*
+				Currently here, code needs to go here to prepare for what to do
+				if(has_effect);
 			*/
 
 			//Don't forget to free pointers.
+			if(pointers){
+				if(pointers->pointers){
+					free(pointers->pointers);
+				}
+				free(pointers);
+			}
+			pointers = 0;
 		}
 
 		//Free group_holder, called current_group
