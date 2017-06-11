@@ -255,15 +255,92 @@ int wanted_indexes_area, char* key);
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 typedef struct group_struct{
-	int values_count;
-	int* values_that_fit_group;
+	int length;
+
+	//Varying sized array of int values
+	int* values_that_fit; 
 }group_holder;
 
-get_valid_group_values(	int choice, int choice_index, int key,\
+typedef struct p_array{
+	//Varying sized array of int*-ers
+	int** pointers;
+	int length;
+}pointer_array;
+
+
+//Go to an area and count how many valid locations it has.
+int count_valid_locations(int choice, int choice_index, int value, char* key){
+	int valid_location_count = 0;
+
+	if(!is_value_present(choice, choice_index, value, key)){
+
+		//count how many cells the value can already go into
+		int valid_location_count = 0;
+
+		for(int cell_index = 0; cell_index < 9; ++cell_index){
+			if(is_value_valid(choice, choice_index, cell_index, value, key)){
+				++valid_location_count;
+			}
+		}
+	}
+
+	return valid_location_count;
+}
+
+
+/*
+	Go to the puzzle of key, and go to area (choice, choice_index)
+
+	take a group_holder and find values valid for that group, that fit group_size.
+
+	load them into the group_holder.
+*/
+void get_valid_group_values( int choice, int choice_index, char* key,\
 						group_holder* current_group, int group_size){
+
 	/*
-		If a value has a valid_count equal to the group_size
+		For each value that isn't already in an area
+			find how many cells it can go into
+
+			if the number of cells == group_size, load it into the array.
 	*/
+
+	//All cells are invalid, from the get go.
+	BOOL is_cell_valid_state_array[9];
+	for(int index = 0; index < 9; ++index){
+		is_cell_valid_state_array[index] = FALSE;
+	}
+
+	//How many values can fit into our group.
+	int current_group_count = 0;
+
+	for(int value = 1; value <= 9; ++value){
+
+		int valid_locations_count = count_valid_locations(choice, choice_index, value, key);
+
+		if(valid_locations_count == group_size){
+			int value_index = value - 1;
+
+			is_cell_valid_state_array[value_index] = TRUE;
+
+			++current_group_count;
+		}
+	}
+
+	if(current_group_count >= group_size){
+		current_group->values_that_fit = (int*)calloc(current_group_count, sizeof(int));
+		current_group_count->length = current_group_count;
+
+		int* values_array_ptr = current_group->values_that_fit;
+
+		for(int index = 0; index < 9; ++index){
+			if(is_cell_valid_state_array[index]){
+				//The index = value - 1
+				*values_array_ptr = (index + 1);
+				++values_array_ptr;
+			}
+		}
+	}
 }
 
 BOOL grouping_algorithm(int choice, int choice_index, char* key){
@@ -275,14 +352,46 @@ BOOL grouping_algorithm(int choice, int choice_index, char* key){
 
 	//Group size 0 and 9 achieve nothing as they indicate empty and full chambers.
 	for(int group_size = 1; group_size < 9; ++group_size){
-
 		/*	
 			What we want is to find all values that fit into our current group.
 		*/
 		group_holder* current_group = (group_holder*) malloc(sizeof(group_holder));
+		current_group->length = 0;
+		current_group->values_that_fit = 0;
 
 		get_valid_group_values(choice, choice_index, key, current_group, group_size);
 
+		if(group_holder->length > 0){
+			//Now we need a pointer array.
+			pointer_array* pointers = (pointer_array*)malloc(sizeof(pointer_array));
+
+			/*	
+				Initialise the pointer array.
+					length = group_size;
+
+					pointers->pointers = calloc(group_size, sizeof(int**));
+
+				Pass pointers and group_holder to a new function that does 
+				the magic.
+
+				this basically just does what i already designed in the incrementing over 
+				arrays test work i spent a damn week on.
+				
+				that, will then find groups.
+
+				If we find a valid group (or hidden pair)
+					we eliminate all other valid_values from those cells.
+			*/
+
+			//Don't forget to free pointers.
+		}
+
+		//Free group_holder, called current_group
+		if(current_group->values_that_fit){
+			free(current_group->values_that_fit);
+		}
+		free(current_group);
+		current_group = 0;
 	}
 
 }
