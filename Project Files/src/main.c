@@ -25,7 +25,14 @@ int main(int argc, char* argv[]){
 				++passes_made;
 				was_change_made = FALSE;
 
-//BOOL single_spot_algorithm(int choice, int choice_index, int value, char* key);
+				//This is coded so that it'll make changes every time it's run
+				//It's not good.
+				for(int choice = 1; choice <= 3; ++choice){
+					for(int choice_index = 0; choice_index < 9; ++choice_index){
+						grouping_algorithm(choice, choice_index, puzzle_key);
+					}
+				}
+
 				BOOL is_single_spot_effective = FALSE;
 				do{
 					is_single_spot_effective = run_single_spot_on_entire_puzzle(puzzle_key);
@@ -44,7 +51,7 @@ int main(int argc, char* argv[]){
 					}
 				}
 				while(is_single_occupant_effective);
-
+				
 			}//End of the algorithms loop.
 			
 			char* grid_state = (is_finished(puzzle_key)) ? "Completed" : "Incomplete";
