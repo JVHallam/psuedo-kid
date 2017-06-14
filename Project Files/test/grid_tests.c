@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <minunit.h>
+#include "../include/minunit.h"
 #include "../include/grid.h"
 #include <stdlib.h>
 
@@ -153,6 +153,8 @@ static char* test_parse_file_to_grid_with_valid_input(){
 		parsed_grid = 0;
 
 	}//end
+
+	return 0;
 }
 
 static char* test_parse_file_to_grid(){
