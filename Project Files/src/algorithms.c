@@ -260,6 +260,12 @@ typedef struct group_struct{
 
 	//Varying sized array of int values
 	int* values_that_fit; 
+
+	//The location of the group too
+	int choice;
+	int choice_index;
+	char* puzzle_key;
+
 }group_holder;
 
 typedef struct p_array{
@@ -355,7 +361,123 @@ void print_pointer_arrays_array(pointer_array* pointers){
 	}
 }
 
-void set_pointer_value(int* new_value, int index, pointer_array* pointers){
+/*
+	pointers contains an array of length x
+		x = pointers->length
+
+	each pointer in the array is pointing to a value.
+
+	each value can only go in x number of spaces
+
+	we're checking if each value can only go in the same spots as one another
+	if they can all only exist in the same cells
+		those cells can only contain those values.
+
+		set those cells' valid_values arrays to only contain those values.
+
+	else
+		return false.
+*/
+BOOL are_values_in_same_cells(pointer_array* pointers, group_holder* groups){
+	/*
+		Take the first value in pointers
+
+		Go to groups->choice, groups->choice_index
+
+		find the first cell where the first value appears.
+			make sure that all other values also occur in that cell
+
+
+			if not, exit, return false.
+
+		do so for the rest of the cells.
+
+		if they all exist in the same cells, return true.
+	*/
+	BOOL were_all_values_in_same_cells = TRUE;
+
+	int first_value = **(pointers->pointers);
+
+	int choice = groups->choice;
+	int choice_index = groups->choice_index;
+	char* key = groups->puzzle_key;
+
+	for(int cell_index = 0; cell_index < 9; ++cell_index){
+
+		if(is_value_valid(choice, choice_index, cell_index, first_value, key)){
+			//Then see if all other values in the array are valid.
+			BOOL are_all_values_valid = TRUE;
+
+			for(int pointer_offset = 1; pointer_offset < pointers->length; ++pointer_offset){
+				int current_value = **(pointers->pointers + pointer_offset);
+
+				if(!is_value_valid(choice, choice_index, cell_index, current_value, key)){
+					are_all_values_valid = FALSE;
+
+					break;
+				}
+			}
+
+			if(!are_all_values_valid){
+				were_all_values_in_same_cells = FALSE;
+
+				break;
+			}
+		}
+	}
+
+	return were_all_values_in_same_cells;
+}
+
+void set_valid_values_to_group_only(pointer_array* pointers, group_holder* groups){
+
+	int first_value = **(pointers->pointers);
+	int choice = groups->choice;
+	int choice_index = groups->choice_index;
+	char* key = groups->puzzle_key;
+
+	for(int cell_index = 0; cell_index < 9; ++cell_index){
+		if(is_value_valid(choice, choice_index, cell_index, first_value, key)){
+			
+			//Set all valid values for that cell to FALSE
+			for(int value = 1; value <= 9; ++value){
+				edit_valid_value(choice, choice_index, cell_index, value, FALSE, key);
+			}
+
+			//Then set the valid_Value for each value in pointers to true.
+			for(int pointer_offset = 0; pointer_offset < pointers->length; ++pointer_offset){
+				int value = **(pointers->pointers + pointer_offset);
+
+				edit_valid_value(choice, choice_index, cell_index, value, TRUE, key);
+			}
+		}
+	}
+
+
+}
+
+BOOL run_hidden_groups(pointer_array* pointers, group_holder* groups){
+
+
+
+	BOOL was_a_valid_group_found = FALSE;
+
+	if(are_values_in_same_cells(pointers, groups)){
+		//Set all cells that can hold 
+		set_valid_values_to_group_only(pointers, groups);
+
+		was_a_valid_group_found = TRUE;
+
+		puts("Hidden Groups Set Values");
+
+	}
+
+	return was_a_valid_group_found;
+}
+
+void set_pointer_value(int* new_value, int index, pointer_array* pointers, \
+						group_holder* groups){
+
 	//Set the value
 	*(pointers->pointers + index) = new_value;
 	//If a change is made to the final pointer, trigger the all important 
@@ -363,7 +485,11 @@ void set_pointer_value(int* new_value, int index, pointer_array* pointers){
 
 	
 	if( (index + 1) == pointers->length){
-		print_pointer_arrays_array(pointers);
+		//Run the desired code.
+
+		//print_pointer_arrays_array(pointers);
+
+		run_hidden_groups(pointers, groups);
 	}
 }
 
@@ -376,7 +502,7 @@ void increment_target(int index, pointer_array* pointers, group_holder* groups){
 
 	for(int offset = index; offset < pointers->length; ++offset){
 		if(new_value <= int_array_end){
-			set_pointer_value(new_value, offset, pointers);
+			set_pointer_value(new_value, offset, pointers, groups);
 		}
 
 		new_value = (*(pointers->pointers + offset)) + 1;
@@ -403,7 +529,7 @@ BOOL analyse_for_valid_groups(pointer_array* pointers, group_holder* groups){
 	//Yes, i am setting the first pointer to point before the array.
 	//Yes, i am then incrementing it back on. This way, increment_target sets all
 	//Values for all other pointers.
-	set_pointer_value(groups->values_that_fit -1, 0, pointers);
+	set_pointer_value(groups->values_that_fit -1, 0, pointers, groups);
 	increment_target(0, pointers, groups);
 
 	int level = 0;
@@ -429,7 +555,6 @@ BOOL analyse_for_valid_groups(pointer_array* pointers, group_holder* groups){
 				increment_target(level, pointers, groups);
 			}
 		}
-
 	}
 
 	//This needs to be an actual return value at some point.
@@ -451,6 +576,9 @@ BOOL grouping_algorithm(int choice, int choice_index, char* key){
 		group_holder* current_group = (group_holder*) malloc(sizeof(group_holder));
 		current_group->length = 0;
 		current_group->values_that_fit = 0;
+		current_group->choice = choice;
+		current_group->choice_index = choice_index;
+		current_group->puzzle_key = key;
 
 		get_valid_group_values(choice, choice_index, key, current_group, group_size);
 

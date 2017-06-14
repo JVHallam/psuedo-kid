@@ -142,10 +142,12 @@ static char* grouping_algorithm_test(){
 	//char* test_puzzle = "test/resources/only_zeroes.puzzle";
 	char* test_puzzle = "test/resources/grouping_algorithm.puzzle";
 
+	
+
 	if(new_puzzle(test_puzzle)){
-		
+		print_target_grid_valid_values(test_puzzle);
 		//int choice = COLUMN;
-		/*
+		
 		for(int choice = 1; choice <= 3; ++choice){
 			puts("=-=-=-Choice=-=-=-");
 			char* choice_array[] = {"Row", "Column", "Chamber"};
@@ -157,13 +159,10 @@ static char* grouping_algorithm_test(){
 				grouping_algorithm(choice, choice_index, test_puzzle);
 			}
 		}
-		*/
-		int choice = CHAMBER;
-		int choice_index = 0;
-		
-		grouping_algorithm(choice, choice_index, test_puzzle);
-		
+		print_target_grid_valid_values(test_puzzle);
 	}
+
+
 
 	return 0;
 }
