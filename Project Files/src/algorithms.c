@@ -407,11 +407,11 @@ BOOL analyse_for_valid_groups(pointer_array* pointers, group_holder* groups){
 	increment_target(0, pointers, groups);
 
 	int level = 0;
-	int top_level = (groups->length) - 1;
+	int top_level = (pointers->length) - 1;
 
-	int* values_array_end = groups->values_that_fit + (groups->length - 1);
+	int* values_array_end = (groups->values_that_fit) + (groups->length - 1);
 
-	while(*(pointers->pointers) < groups->values_that_fit){
+	while(*(pointers->pointers) < values_array_end){ 
 		if( (*(pointers->pointers + level)) ==  values_array_end){
 			--level;
 		}
@@ -421,7 +421,7 @@ BOOL analyse_for_valid_groups(pointer_array* pointers, group_holder* groups){
 			//If we're not at the top and the value above us isn't at the end.
 			if(
 				(level < top_level) && \
-				(*(pointers->pointers + level + 1) != values_array_end)
+				(*(pointers->pointers + level + 1)) < values_array_end
 			){
 				++level;
 			}
@@ -429,6 +429,7 @@ BOOL analyse_for_valid_groups(pointer_array* pointers, group_holder* groups){
 				increment_target(level, pointers, groups);
 			}
 		}
+
 	}
 
 	//This needs to be an actual return value at some point.
