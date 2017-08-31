@@ -223,8 +223,8 @@ static char* test_get_value(){
 */
 static char* test_is_value_present(){
 	char* puzzle_keys[3] = {
-		"test/resources/is_present_row_test.puzzle",
 		"test/resources/is_present_column_test.puzzle",
+		"test/resources/is_present_row_test.puzzle",
 		"test/resources/is_present_chamber_test.puzzle"
 	};
 
@@ -234,8 +234,11 @@ static char* test_is_value_present(){
 		char* current_puzzle = puzzle_keys[puzzle_index];
 
 		if(new_puzzle(current_puzzle)){
+			print_grid(current_puzzle);
+
 			for(int area_index = 0; area_index < 9; ++area_index){
 				for(int value = 1; value <= 9; ++value){
+
 					BOOL was_value_present = is_value_present(	choice_type, area_index, \
 																value, current_puzzle);
 
@@ -568,7 +571,10 @@ static char* run_all_tests(){
 	mu_run_test(test_set_values_input_validation);
 	mu_run_test(test_set_value);
 	mu_run_test(test_get_value);
+
+	//Devil test.
 	mu_run_test(test_is_value_present);
+
 	mu_run_test(test_get_cells_area_index);
 	mu_run_test(test_is_value_valid);
 	mu_run_test(test_is_finished);
