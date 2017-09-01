@@ -85,20 +85,6 @@ static char* test_single_spot_algorithm(){
 
 //Single occupant end
 
-
-		//Subline
-		change_was_made = FALSE;
-
-		for(int choice = 1; choice <= 3; ++choice){
-			for(int area_index = 0; area_index < 9; ++area_index){
-				for(int value = 1; value <= 9; ++value){
-					if(subline_algorithm(choice, area_index, value, puzzle)){
-						change_was_made = TRUE;
-					}
-				}
-			}
-		}
-
 		}
 
 
@@ -113,28 +99,6 @@ static char* test_single_spot_algorithm(){
 	else{
 		return "Couldn't load valid grid.";
 	}
-}
-
-static char* second_test(){
-	char* puzzle_key = "test/resources/subline.puzzle";
-
-	if(new_puzzle(puzzle_key)){
-
-		//print_target_grid_valid_values(puzzle_key);
-
-		int choice = CHAMBER;
-		for(int area_index = 0; area_index < 2; ++area_index){
-			for(int value = 1; value <= 9; ++value){
-				if(subline_algorithm(choice, area_index, value, puzzle_key)){
-					puts("Change was made");
-				}
-			}
-		}
-		
-		print_target_grid_valid_values(puzzle_key);
-	}
-
-	return 0;
 }
 
 static char* grouping_algorithm_test(){
@@ -168,8 +132,6 @@ static char* grouping_algorithm_test(){
 }
 
 static char* run_all_tests(){
-	//mu_run_test(test_single_spot_algorithm);
-	//mu_run_test(second_test);
 	mu_run_test(grouping_algorithm_test);
 
 	return 0;
