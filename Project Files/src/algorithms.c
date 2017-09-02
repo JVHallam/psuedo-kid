@@ -292,8 +292,18 @@ void set_valid_values_to_group_only(pointer_array* pointers, group_holder* group
 
 BOOL run_hidden_groups(pointer_array* pointers, group_holder* groups){
 
+	/*
+		I think there's a problem.
+			Let's say there's a valid group evaluted on round 1.
+			On the rest of round 1, no changes by other algorithms are made.
 
+			Round 2, the same group is re-evaluated to be valid.
+			This returns a True.
 
+			We then get stuck in an infinite loop, being told that the same group
+			is valid, over and over again.
+
+	*/
 	BOOL was_a_valid_group_found = FALSE;
 
 	if(are_values_in_same_cells(pointers, groups)){
@@ -303,14 +313,15 @@ BOOL run_hidden_groups(pointer_array* pointers, group_holder* groups){
 		was_a_valid_group_found = TRUE;
 
 		//puts("Hidden Groups Set Values");
-
 	}
 
 	return was_a_valid_group_found;
 }
 
-void set_pointer_value(int* new_value, int index, pointer_array* pointers, \
+BOOL set_pointer_value(int* new_value, int index, pointer_array* pointers, \
 						group_holder* groups){
+
+	BOOL was_hidden_groups_successful = FALSE;
 
 	//Set the value
 	*(pointers->pointers + index) = new_value;
@@ -323,46 +334,72 @@ void set_pointer_value(int* new_value, int index, pointer_array* pointers, \
 
 		//print_pointer_arrays_array(pointers);
 
-		run_hidden_groups(pointers, groups);
+		was_hidden_groups_successful = run_hidden_groups(pointers, groups);
 	}
+
+	return was_hidden_groups_successful;
 }
 
 //When a value in the pointer array is incremented, all pointers above it are set to
 //The (previous pointers value + 1);
-void increment_target(int index, pointer_array* pointers, group_holder* groups){
+BOOL increment_target(int index, pointer_array* pointers, group_holder* groups){
 	int* int_array_end = (groups->values_that_fit + groups->length - 1);
+
+	BOOL was_hidden_groups_successful = FALSE;
 
 	int* new_value = (*(pointers->pointers + index)) +1;
 
 	for(int offset = index; offset < pointers->length; ++offset){
 		if(new_value <= int_array_end){
-			set_pointer_value(new_value, offset, pointers, groups);
+			was_hidden_groups_successful = set_pointer_value(new_value, offset, pointers, groups);
 		}
 
 		new_value = (*(pointers->pointers + offset)) + 1;
 	}
+
+	return was_hidden_groups_successful;
 }
 
 BOOL analyse_for_valid_groups(pointer_array* pointers, group_holder* groups){
-
 	/*
-		Do what the incrementing over arrays's code did, but change what the
-		code does on changes to the final pointer.
-	*/
+		This code creates an array of pointers. 
+		These pointers are pointing to a list of possibilities.
 
-	/*
-		additional functions needed:
-			set_value(int*, index, pointer_array);
+		Each pointer is pointing to a unique value in this list, higher than the previous
+		pointer.
 
-		increment_target(0, pointers, values);
+		When one pointer is incremented, the pointers later in the list are set
+		to be 1 past it, then the next to be 1 past that, etc.
 
-		void set_value(int* new_value, int index, pointer_array* pointers)
-		void increment_target(int index, pointer_array* pointers, group_holder* groups)
+		Whenever the last pointer in the list has it's value changed, in the 
+		set_pointer_value function, it assumes a new valid group has been formed
+		and runs the grouping code.
+
+
+		Say we have a list of values: 0, 1, 2, 3, 4, 5
+
+		and 3 pointers:
+		p1, p2, p3
+
+		p1 = 0;
+		p2 = 1;
+		p3 = 2;
+
+		That's one list. We then increment p3, until it's at the end of the list, p3 = 5.
+		When p3 = 5, we go down and increment p2. If p2 is incremented, then we set p3 = p2+1;
+
+		This goes on until p2 = 5; When p2 = 5, set p1=1, p2=2, p3=3.
+
+		All pointers must be pointing at unique values when the grouping code runs.
+
+		So whenever p3 changes value, it runs the code.
 	*/
 
 	//Yes, i am setting the first pointer to point before the array.
 	//Yes, i am then incrementing it back on. This way, increment_target sets all
 	//Values for all other pointers.
+	BOOL was_change_made = FALSE;
+
 	set_pointer_value(groups->values_that_fit -1, 0, pointers, groups);
 	increment_target(0, pointers, groups);
 
@@ -386,17 +423,20 @@ BOOL analyse_for_valid_groups(pointer_array* pointers, group_holder* groups){
 				++level;
 			}
 			else{
-				increment_target(level, pointers, groups);
+				BOOL was_hidden_groups_successful = increment_target(level, pointers, groups);
+				if(was_hidden_groups_successful && !was_change_made){
+					was_change_made = TRUE;
+				}
 			}
 		}
 	}
 
 	//This needs to be an actual return value at some point.
-	return FALSE;
+	return was_change_made;
 }
 
 BOOL grouping_algorithm(int choice, int choice_index, char* key){
-
+	BOOL was_change_made = FALSE;
 	/*
 		What we want:
 			A list of values that can be a part of our current group.
@@ -422,7 +462,11 @@ BOOL grouping_algorithm(int choice, int choice_index, char* key){
 			pointers->length = group_size;
 			pointers->pointers = (int**)calloc(group_size, sizeof(int*));
 
+
 			BOOL had_effect = analyse_for_valid_groups(pointers, current_group);
+			if(had_effect){
+				was_change_made = TRUE;
+			}
 
 			//if(had_effect), get ready to return TRUE;
 			/*

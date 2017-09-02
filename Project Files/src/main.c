@@ -9,6 +9,8 @@ BOOL run_single_occupant_on_entire_puzzle(char* puzzle_key);
 
 BOOL run_single_spot_on_entire_puzzle(char* puzzle_key);
 
+BOOL run_all_algorithms(char* puzzle_key);
+
 int main(int argc, char* argv[]){
 	//Take the users commandline argument
 
@@ -23,35 +25,8 @@ int main(int argc, char* argv[]){
 
 			while( (!is_finished(puzzle_key)) && was_change_made){
 				++passes_made;
-				was_change_made = FALSE;
-
-				//This is coded so that it'll make changes every time it's run
-				//It's not good.
-				for(int choice = 1; choice <= 3; ++choice){
-					for(int choice_index = 0; choice_index < 9; ++choice_index){
-						grouping_algorithm(choice, choice_index, puzzle_key);
-					}
-				}
-
-				BOOL is_single_spot_effective = FALSE;
-				do{
-					is_single_spot_effective = run_single_spot_on_entire_puzzle(puzzle_key);
-					if(is_single_spot_effective){
-						was_change_made = TRUE;
-					}
-
-				}
-				while(is_single_spot_effective);
-
-				BOOL is_single_occupant_effective = FALSE;
-				do{
-					is_single_occupant_effective = run_single_occupant_on_entire_puzzle(puzzle_key);
-					if(is_single_occupant_effective){
-						was_change_made = TRUE;
-					}
-				}
-				while(is_single_occupant_effective);
 				
+				was_change_made = run_all_algorithms(puzzle_key);
 			}//End of the algorithms loop.
 			
 			char* grid_state = (is_finished(puzzle_key)) ? "Completed" : "Incomplete";
@@ -74,6 +49,36 @@ int main(int argc, char* argv[]){
 	}
 
 	return 0;
+}
+
+BOOL run_all_algorithms(char* puzzle_key){
+	BOOL was_change_made = FALSE;
+	//Grouping algorithm returns true, even when re-evaluating the same group.
+	for(int choice = 1; choice <= 3; ++choice){
+		for(int choice_index = 0; choice_index < 9; ++choice_index){
+			grouping_algorithm(choice, choice_index, puzzle_key);
+		}
+	}
+	
+	BOOL is_single_spot_effective = FALSE;
+	do{
+		is_single_spot_effective = run_single_spot_on_entire_puzzle(puzzle_key);
+		if(is_single_spot_effective){
+			was_change_made = TRUE;
+		}
+	}
+	while(is_single_spot_effective);
+
+	BOOL is_single_occupant_effective = FALSE;
+	do{
+		is_single_occupant_effective = run_single_occupant_on_entire_puzzle(puzzle_key);
+		if(is_single_occupant_effective){
+			was_change_made = TRUE;
+		}
+	}
+	while(is_single_occupant_effective);
+
+	return was_change_made;
 }
 
 char* parse_arguments(int argc, char* argv[]){
